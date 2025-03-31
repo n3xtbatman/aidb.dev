@@ -56,16 +56,19 @@ window.onload = () => {
       return;
     }
 
-    // ✅ Mermaid v11.6+ requires diagram type as first line (NO init block)
+    // ✅ Mermaid v11.6.0 requires "graph TD" at start and no wrapping
     let diagram = 'graph TD\nStart["User Prompt"]\n';
     matchedTools.forEach((tool, i) => {
       diagram += `Tool${i}["${tool.Name}"]\n`;
       diagram += `Start --> Tool${i}\n`;
     });
 
-    flowchartEl.innerHTML = `<pre class="mermaid">${diagram}</pre>`;
+    const graphHtml = `<div class="mermaid">${diagram}</div>`;
+    flowchartEl.innerHTML = graphHtml;
+
+    // ✅ Force render with Mermaid.run()
     setTimeout(() => {
-      mermaid.init(undefined, "#flowchart");
+      mermaid.run();
     }, 0);
   }
 
