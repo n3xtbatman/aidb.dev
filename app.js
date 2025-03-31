@@ -62,12 +62,11 @@ window.onload = () => {
       diagram += `    Start --> Tool${i}\n`;
     });
 
-    // ✅ Safely inject and render Mermaid
-    document.getElementById("flowchart").innerHTML = `<pre class="mermaid">${diagram}</pre>`;
-setTimeout(() => {
-  mermaid.init(undefined, "#flowchart");
-}, 0);
-
+    // ✅ Inject the diagram and initialize Mermaid after DOM update
+    flowchartEl.innerHTML = `<pre class="mermaid">${diagram}</pre>`;
+    setTimeout(() => {
+      mermaid.init(undefined, "#flowchart");
+    }, 0);
   }
 
   window.generateFlowchart = generateFlowchart;
