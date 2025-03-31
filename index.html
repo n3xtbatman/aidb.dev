@@ -31,9 +31,17 @@
       display: flex;
       justify-content: center;
       overflow-x: auto;
+      padding-bottom: 2rem;
     }
     #flowchart > div {
-      min-width: 800px;
+      min-width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    @media (min-width: 768px) {
+      #flowchart > div {
+        max-width: 1000px;
+      }
     }
   </style>
 </head>
@@ -41,8 +49,8 @@
   <div class="container mx-auto py-16 px-4 text-center">
     <h1 class="text-3xl font-bold mb-8">Generate a Flowchart</h1>
 
-    <div class="max-w-xl mx-auto relative flex items-center space-x-2">
-      <input id="promptInput" type="text" placeholder="Type your prompt..." class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" oninput="showAutocomplete(this.value)" onkeydown="if(event.key === 'Enter') generateFlowchart()" />
+    <div class="max-w-xl mx-auto relative flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+      <input id="promptInput" type="text" placeholder="Type your prompt..." class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2 sm:mb-0" oninput="showAutocomplete(this.value)" onkeydown="if(event.key === 'Enter') generateFlowchart()" />
       <button onclick="generateFlowchart()" class="bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition whitespace-nowrap">Generate</button>
       <div id="autocompleteResults" class="hidden absolute top-full mt-1 left-0 right-0"></div>
     </div>
@@ -51,7 +59,7 @@
 
     <div id="flowchart-container" class="mt-12">
       <div id="flowchart">
-        <div id="flowchart-inner" class="mx-auto" style="max-width: 1000px;"></div>
+        <div id="flowchart-inner" class="mx-auto"></div>
       </div>
     </div>
   </div>
