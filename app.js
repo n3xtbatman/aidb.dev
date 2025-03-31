@@ -1,7 +1,7 @@
 window.onload = () => {
   console.log("✅ app.js loaded");
 
-  // Show/hide example prompt modal
+  // Show/hide example prompts modal
   function showExamples() {
     document.getElementById("exampleModal").classList.remove("hidden");
   }
@@ -10,11 +10,11 @@ window.onload = () => {
     document.getElementById("exampleModal").classList.add("hidden");
   }
 
-  // Make functions globally accessible from HTML
+  // Expose to HTML
   window.showExamples = showExamples;
   window.hideExamples = hideExamples;
 
-  // Load the tool database
+  // Load AIDB.json
   let toolData = [];
 
   fetch('data/AIDB.json')
@@ -31,7 +31,6 @@ window.onload = () => {
       document.getElementById("flowchart").innerHTML = "<p class='text-red-600 mt-4'>Failed to load tools. Check the console.</p>";
     });
 
-  // Main flowchart generation function
   function generateFlowchart() {
     console.log("🟢 Generate button clicked");
 
@@ -61,23 +60,16 @@ window.onload = () => {
 
     // Safe Mermaid render
     if (typeof mermaid !== "undefined") {
-      mermaid.initialize({ startOnLoad: false }); // Ensure it's ready
-if (typeof mermaid !== "undefined") {
-  mermaid.initialize({ startOnLoad: false });
-  mermaid.render('generatedFlowchart', diagram, svg => {
-    flowchartEl.innerHTML = svg;
-  });
-} else {
-  console.error("❌ Mermaid is not defined");
-  flowchartEl.innerHTML = "<p class='text-red-600 mt-4'>Mermaid.js failed to load.</p>";
-}
-
+      mermaid.initialize({ startOnLoad: false });
+      mermaid.render('generatedFlowchart', diagram, svg => {
+        flowchartEl.innerHTML = svg;
+      });
     } else {
       console.error("❌ Mermaid is not defined");
       flowchartEl.innerHTML = "<p class='text-red-600 mt-4'>Mermaid.js failed to load.</p>";
     }
   }
 
-  // Expose this globally so the HTML button can call it
+  // Expose to button
   window.generateFlowchart = generateFlowchart;
 };
