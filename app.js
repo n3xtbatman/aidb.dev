@@ -1,7 +1,6 @@
 window.onload = () => {
   console.log("✅ app.js loaded");
 
-  // ✅ Initialize Mermaid once on page load
   if (typeof mermaid !== "undefined") {
     mermaid.initialize({ startOnLoad: false });
     console.log("✅ Mermaid initialized");
@@ -64,9 +63,9 @@ window.onload = () => {
     });
 
     if (typeof mermaid !== "undefined") {
-      mermaid.render('generatedFlowchart', diagram, svg => {
-        flowchartEl.innerHTML = svg;
-      });
+      mermaid.render('generatedFlowchart', diagram, (svg) => {
+        document.getElementById("flowchart").innerHTML = svg;
+      }, document.getElementById("flowchart"));
     } else {
       console.error("❌ Mermaid is not defined");
       flowchartEl.innerHTML = "<p class='text-red-600 mt-4'>Mermaid.js failed to load.</p>";
