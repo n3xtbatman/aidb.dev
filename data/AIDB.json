@@ -27,6 +27,20 @@
       "Use Cases": "concept art, storytelling",
       "Logo URL": "https://logo.url/mj.png",
       "Website": "https://midjourney.com"
+    },
+    "GitHub Copilot": {
+      "Description": "Code help",
+      "Category": "Code",
+      "Use Cases": "code, design",
+      "Logo URL": "https://logo.url/mj.png",
+      "Website": "https://www.github.com/"
+    },
+    "Soundraw": {
+      "Description": "Sound Help",
+      "Category": "Audio",
+      "Use Cases": "art, sound",
+      "Logo URL": "https://logo.url/mj.png",
+      "Website": "https://www.google.com/"
     }
   },
   "Categories": {
