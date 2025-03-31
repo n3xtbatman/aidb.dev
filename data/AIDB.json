@@ -1,0 +1,32 @@
+{
+  "Sheet1": {
+    "ChatGPT": {
+      "Description": "Text generation and Q&A",
+      "Category": "NLP",
+      "Use Cases": "chatbot, tutor, assistant",
+      "Logo URL": "https://logo.url/chatgpt.png",
+      "Website": "https://openai.com/chatgpt"
+    },
+    "DALL·E": {
+      "Description": "Image generation from text prompts",
+      "Category": "Image Generation",
+      "Use Cases": "art, design, mockups",
+      "Logo URL": "https://logo.url/dalle.png",
+      "Website": "https://openai.com/dall-e"
+    },
+    "Whisper": {
+      "Description": "Speech-to-text transcription",
+      "Category": "Audio",
+      "Use Cases": "subtitles, meetings",
+      "Logo URL": "https://logo.url/whisper.png",
+      "Website": "https://openai.com/whisper"
+    },
+    "Midjourney": {
+      "Description": "Artistic image generation",
+      "Category": "Image Generation",
+      "Use Cases": "concept art, storytelling",
+      "Logo URL": "https://logo.url/mj.png",
+      "Website": "https://midjourney.com"
+    }
+  }
+}
