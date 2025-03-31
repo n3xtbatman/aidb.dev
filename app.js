@@ -1,84 +1,81 @@
-console.log("app.js loaded");
+console.log('app.js loaded');
 
-let toolData = {};
-let categoryData = {};
+let tools = {};
+let categories = {};
 
-// Load JSON data
-fetch("AIDB.json")
-  .then((response) => response.json())
-  .then((data) => {
-    console.log("Loaded and converted AIDB.json:", data);
-    toolData = data.Tools;
-    categoryData = data.Categories;
-  });
+fetch('data/AIDB.json')
+  .then(response => response.json())
+  .then(data => {
+    tools = data.Tools;
+    categories = data.Categories;
+    console.log('Loaded and converted AIDB.json:', { tools, categories });
+  })
+  .catch(error => console.error('Error loading AIDB.json:', error));
 
-// Show/hide examples
 function showExamples() {
   document.getElementById("exampleModal").classList.remove("hidden");
 }
+
 function hideExamples() {
   document.getElementById("exampleModal").classList.add("hidden");
 }
 
-// Generate Flowchart
 function generateFlowchart() {
   const prompt = document.getElementById("promptInput").value.toLowerCase();
   const flowchartEl = document.getElementById("flowchart");
-  flowchartEl.innerHTML = "";
+  const usedCategories = [];
 
-  console.log("Generate button clicked");
-
-  const matchedCategories = [];
-
-  for (const category in categoryData) {
-    const keywords = categoryData[category].Keywords.toLowerCase().split(",");
-    if (keywords.some((k) => prompt.includes(k.trim()))) {
-      matchedCategories.push(category);
+  for (const [cat, config] of Object.entries(categories)) {
+    const keywords = config.Keywords.toLowerCase().split(/,\s*/);
+    if (keywords.some(k => prompt.includes(k))) {
+      usedCategories.push({
+        name: cat,
+        top: config["Top Tool"],
+        alts: config["Alt Tools"].split(/,\s*/)
+      });
     }
   }
 
-  if (matchedCategories.length === 0) {
-    flowchartEl.innerHTML =
-      '<p class="text-red-500 mt-6 text-lg">No matching tools found.</p>';
+  if (usedCategories.length === 0) {
+    flowchartEl.innerHTML = '<p class="text-red-600 font-semibold">No matching tools found.</p>';
     return;
   }
 
-  let diagram = `graph TD\n  Start["User Prompt"]\n`;
+  let diagram = "graph TD\nStart[\"User Prompt\"]\n";
+  let styles = "";
 
-  matchedCategories.forEach((category) => {
-    const catLabel = category.charAt(0).toUpperCase() + category.slice(1);
-    const topTool = categoryData[category]["Top Tool"];
-    const altTools = categoryData[category]["Alt Tools"]
-      ? categoryData[category]["Alt Tools"].split(",").map((t) => t.trim())
-      : [];
+  usedCategories.forEach((catObj, i) => {
+    const cat = catObj.name;
+    const topToolName = catObj.top;
+    const topTool = tools[topToolName];
+    const topId = `${cat}_top`;
+    const catId = `${cat}_cat`;
 
-    diagram += `  ${category}["${catLabel}"]\n`;
-    diagram += `  Start --> ${category}\n`;
+    diagram += `${catId}["${cat.toUpperCase()}"]\n`;
+    diagram += `${topId}["<a href='${topTool.Website}' target='_blank'><b>${topToolName}</b></a>"]\n`;
+    diagram += `Start --> ${catId}\n`;
+    diagram += `${catId} --> ${topId}\n`;
 
-    if (toolData[topTool]) {
-      const link = toolData[topTool].Website;
-      diagram += `  ${category}_top["<a href='${link}' target='_blank'><b>${topTool}</b></a>"]\n`;
-      diagram += `  ${category} --> ${category}_top\n`;
-    }
+    styles += `class ${topId} green;\n`;
 
-    altTools.forEach((alt, index) => {
-      if (toolData[alt]) {
-        const link = toolData[alt].Website;
-        const id = `${category}_alt_${index}`;
-        diagram += `  ${id}["<a href='${link}' target='_blank'>${alt}</a>"]\n`;
-        diagram += `  ${category} --> ${id}\n`;
+    catObj.alts.forEach((altName) => {
+      const altTool = tools[altName];
+      if (altTool) {
+        const altId = `${cat}_alt_${altName.replace(/\\W/g, '')}`;
+        diagram += `${altId}["<a href='${altTool.Website}' target='_blank'>${altName}</a>"]\n`;
+        diagram += `${catId} --> ${altId}\n`;
+        styles += `class ${altId} gray;\n`;
       }
     });
   });
 
-  console.log("Mermaid diagram source:\n", diagram);
+  diagram += `classDef green fill:#bbf7d0,stroke:#15803d,stroke-width:2px,color:#166534,font-weight:bold;\n`;
+  diagram += `classDef gray fill:#e5e7eb,stroke:#6b7280,stroke-width:1px,color:#374151;\n`;
+  diagram += styles;
 
-  try {
-    mermaid.render("generatedFlowchart", diagram, (svgCode) => {
-      flowchartEl.innerHTML = svgCode;
-    });
-  } catch (err) {
-    console.error(err);
-    flowchartEl.innerHTML = `<p class="text-red-500 mt-6 text-lg">Error rendering diagram.</p>`;
-  }
+  console.log("Mermaid Diagram:\n", diagram);
+
+  mermaid.render('generatedFlowchart', diagram, (svgCode) => {
+    flowchartEl.innerHTML = svgCode;
+  });
 }
