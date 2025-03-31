@@ -56,13 +56,12 @@ window.onload = () => {
       return;
     }
 
-    let diagram = 'graph TD\n    Start["User Prompt"]\n';
+    let diagram = 'graph TD\nStart["User Prompt"]\n';
     matchedTools.forEach((tool, i) => {
-      diagram += `    Tool${i}["${tool.Name}"]\n`;
-      diagram += `    Start --> Tool${i}\n`;
+      diagram += `Tool${i}["${tool.Name}"]\n`;
+      diagram += `Start --> Tool${i}\n`;
     });
 
-    // ✅ Inject the diagram and initialize Mermaid after DOM update
     flowchartEl.innerHTML = `<pre class="mermaid">${diagram}</pre>`;
     setTimeout(() => {
       mermaid.init(undefined, "#flowchart");
