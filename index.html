@@ -5,15 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Flowchart Generator</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    #autocompleteResults {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 50;
+      text-align: left;
+    }
+    #autocompleteResults div {
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+    #autocompleteResults div:hover {
+      background-color: #f3f4f6;
+    }
+  </style>
 </head>
 <body class="bg-white text-gray-900 font-sans">
   <div class="container mx-auto py-16 px-4 text-center">
     <h1 class="text-3xl font-bold mb-8">Generate a Flowchart</h1>
 
-    <div class="max-w-xl mx-auto">
-      <input id="promptInput" type="text" placeholder="Type your prompt..." class="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+    <div class="max-w-xl mx-auto relative">
+      <input id="promptInput" type="text" placeholder="Type your prompt..." class="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400" oninput="showAutocomplete(this.value)" />
+      <div id="autocompleteResults" class="hidden"></div>
       <button onclick="generateFlowchart()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">Generate Flowchart</button>
-
       <p class="mt-4 text-sm text-blue-500 cursor-pointer" onclick="showExamples()">Example Prompts</p>
     </div>
 
@@ -55,6 +74,58 @@
       document.getElementById("exampleModal").classList.add("hidden");
     }
 
+    const simplifiedPromptMap = [
+      ["create ai tool", /ai tool/],
+      ["generate images", /generate.*image|image generation/],
+      ["create chatbot", /chatbot|chat bot/],
+      ["build website", /build.*website|website builder/],
+      ["create music", /create.*music|music generation/],
+      ["code assistant", /code assistant|code completion|copilot/],
+      ["3d modeling", /3d.*model/],
+      ["generate voice", /voice generation|text to speech/],
+      ["transcribe audio", /transcribe|speech to text|whisper/],
+      ["generate text", /generate.*text|text generation/],
+      ["summarize text", /summarize|tl;dr/],
+      ["create presentation", /create.*presentation|slide/],
+      ["generate avatar", /avatar|character creator/],
+      ["game design", /create.*game|game design/],
+      ["app builder", /build.*app|app generator/],
+      ["productivity assistant", /ai productivity|task automation/],
+      ["generate video", /generate.*video|video ai/],
+      ["logo design", /logo/],
+      ["write blog", /write.*blog|blog assistant/],
+      ["ai search", /ai search|smart search/],
+      ["startup tools", /startup|founder|pitch/]
+    ];
+
+    function simplifyPrompt(prompt) {
+      const cleaned = prompt.toLowerCase();
+      for (let [label, pattern] of simplifiedPromptMap) {
+        if (pattern.test(cleaned)) return `<b>${label.charAt(0).toUpperCase() + label.slice(1)}</b>`;
+      }
+      return "<b>User Prompt</b>";
+    }
+
+    function showAutocomplete(input) {
+      const box = document.getElementById("autocompleteResults");
+      if (!input || input.length < 2) return (box.classList.add("hidden"));
+
+      const matches = simplifiedPromptMap
+        .map(([label]) => label)
+        .filter(label => label.toLowerCase().includes(input.toLowerCase()));
+
+      if (matches.length === 0) return box.classList.add("hidden");
+
+      box.innerHTML = matches.map(m => `<div onclick='selectAutocomplete("${m}")'>${m}</div>`).join("");
+      box.classList.remove("hidden");
+    }
+
+    function selectAutocomplete(text) {
+      const input = document.getElementById("promptInput");
+      input.value = text;
+      document.getElementById("autocompleteResults").classList.add("hidden");
+    }
+
     function generateFlowchart() {
       const prompt = document.getElementById("promptInput").value.toLowerCase();
       const flowchartEl = document.getElementById("flowchart");
@@ -71,7 +142,8 @@
         return;
       }
 
-      let diagram = "graph TD\nStart[\"User Prompt\"]\n";
+      const simplified = simplifyPrompt(prompt);
+      let diagram = `graph TD\nStart[\"${simplified}\"]\n`;
       let classLines = "";
 
       matchedCats.forEach(([cat, info]) => {
