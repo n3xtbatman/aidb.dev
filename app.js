@@ -1,16 +1,18 @@
-console.log('app.js loaded');
+let toolData = {};
+let categoryData = {};
 
-let tools = {};
-let categories = {};
-
-fetch('data/AIDB.json')
-  .then(response => response.json())
-  .then(data => {
-    tools = data.Tools;
-    categories = data.Categories;
-    console.log('Loaded and converted AIDB.json:', { tools, categories });
-  })
-  .catch(error => console.error('Error loading AIDB.json:', error));
+window.onload = async () => {
+  console.log("app.js loaded");
+  try {
+    const response = await fetch("data/AIDB.json");
+    const json = await response.json();
+    toolData = json.Tools || {};
+    categoryData = json.Categories || {};
+    console.log("Loaded and parsed AIDB.json:", { toolData, categoryData });
+  } catch (error) {
+    console.error("Error loading AIDB.json:", error);
+  }
+};
 
 function showExamples() {
   document.getElementById("exampleModal").classList.remove("hidden");
@@ -21,61 +23,61 @@ function hideExamples() {
 }
 
 function generateFlowchart() {
-  const prompt = document.getElementById("promptInput").value.toLowerCase();
+  const input = document.getElementById("promptInput").value.toLowerCase();
   const flowchartEl = document.getElementById("flowchart");
-  const usedCategories = [];
 
-  for (const [cat, config] of Object.entries(categories)) {
-    const keywords = config.Keywords.toLowerCase().split(/,\s*/);
-    if (keywords.some(k => prompt.includes(k))) {
-      usedCategories.push({
-        name: cat,
-        top: config["Top Tool"],
-        alts: config["Alt Tools"].split(/,\s*/)
-      });
+  const matchedCategories = [];
+
+  for (const [category, data] of Object.entries(categoryData)) {
+    const keywords = data.Keywords.toLowerCase().split(",").map(k => k.trim());
+    if (keywords.some(keyword => input.includes(keyword))) {
+      matchedCategories.push({ category, ...data });
     }
   }
 
-  if (usedCategories.length === 0) {
-    flowchartEl.innerHTML = '<p class="text-red-600 font-semibold">No matching tools found.</p>';
+  if (matchedCategories.length === 0) {
+    flowchartEl.innerHTML = `<p class="text-red-600">No matching tools found.</p>`;
     return;
   }
 
-  let diagram = "graph TD\nStart[\"User Prompt\"]\n";
-  let styles = "";
+  // Build Mermaid diagram
+  let diagram = "graph TD\n";
+  diagram += `Start["User Prompt"]\n`;
 
-  usedCategories.forEach((catObj, i) => {
-    const cat = catObj.name;
-    const topToolName = catObj.top;
-    const topTool = tools[topToolName];
-    const topId = `${cat}_top`;
-    const catId = `${cat}_cat`;
+  const nodes = [];
 
-    diagram += `${catId}["${cat.toUpperCase()}"]\n`;
-    diagram += `${topId}["<a href='${topTool.Website}' target='_blank'><b>${topToolName}</b></a>"]\n`;
-    diagram += `Start --> ${catId}\n`;
-    diagram += `${catId} --> ${topId}\n`;
+  matchedCategories.forEach((match, index) => {
+    const idPrefix = match.category.toLowerCase();
+    const topToolName = match["Top Tool"];
+    const altToolNames = (match["Alt Tools"] || "").split(",").map(t => t.trim());
 
-    styles += `class ${topId} green;\n`;
+    const topTool = toolData[topToolName];
+    const topToolLabel = `<b>${topToolName}</b>`;
+    const topToolUrl = topTool?.Website || "#";
 
-    catObj.alts.forEach((altName) => {
-      const altTool = tools[altName];
-      if (altTool) {
-        const altId = `${cat}_alt_${altName.replace(/\\W/g, '')}`;
-        diagram += `${altId}["<a href='${altTool.Website}' target='_blank'>${altName}</a>"]\n`;
-        diagram += `${catId} --> ${altId}\n`;
-        styles += `class ${altId} gray;\n`;
-      }
+    const topId = `${idPrefix}_top`;
+    nodes.push(`${idPrefix}["${match.category.charAt(0).toUpperCase() + match.category.slice(1)}"]`);
+    nodes.push(`${topId}["<a href='${topToolUrl}' target='_blank'>${topToolLabel}</a>"]`);
+    diagram += `Start --> ${idPrefix}\n${idPrefix} --> ${topId}\n`;
+
+    altToolNames.forEach((alt, i) => {
+      const altTool = toolData[alt];
+      const altId = `${idPrefix}_alt_${i}`;
+      const label = altTool ? `<a href='${altTool.Website}' target='_blank'>${alt}</a>` : alt;
+      nodes.push(`${altId}["${label}"]`);
+      diagram += `${idPrefix} --> ${altId}\n`;
     });
+
+    diagram += `class ${topId} top;\n`;
+    altToolNames.forEach((_, i) => diagram += `class ${idPrefix}_alt_${i} alt;\n`);
   });
 
-  diagram += `classDef green fill:#bbf7d0,stroke:#15803d,stroke-width:2px,color:#166534,font-weight:bold;\n`;
-  diagram += `classDef gray fill:#e5e7eb,stroke:#6b7280,stroke-width:1px,color:#374151;\n`;
-  diagram += styles;
+  // Add class defs
+  diagram += `
+classDef top fill:#bbf7d0,stroke:#22c55e,stroke-width:2px,color:#064e3b,font-weight:bold;
+classDef alt fill:#e5e7eb,stroke:#6b7280,stroke-width:1px,color:#374151;
+`;
 
-  console.log("Mermaid Diagram:\n", diagram);
-
-  mermaid.render('generatedFlowchart', diagram, (svgCode) => {
-    flowchartEl.innerHTML = svgCode;
-  });
+  flowchartEl.innerHTML = `<div class="mermaid">${diagram}</div>`;
+  mermaid.run();
 }
