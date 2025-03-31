@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Flowchart Generator</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-900 font-sans">
+  <div class="container mx-auto py-16 px-4 text-center">
+    <h1 class="text-3xl font-bold mb-8">Generate a Flowchart</h1>
+    
+    <div class="max-w-xl mx-auto">
+      <input id="promptInput" type="text" placeholder="Type your prompt..." class="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      <button onclick="generateFlowchart()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">Generate Flowchart</button>
+
+      <p class="mt-4 text-sm text-blue-500 cursor-pointer" onclick="showExamples()">Example Prompts</p>
+    </div>
+
+    <div id="flowchart" class="mt-12"></div>
+  </div>
+
+  <!-- Modal -->
+  <div id="exampleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md">
+      <h2 class="text-xl font-semibold mb-4">Example Prompts</h2>
+      <ul class="text-left space-y-2">
+        <li>🧠 "Find tools for building an AI tutor"</li>
+        <li>🎨 "Which tools can generate art from text?"</li>
+        <li>💬 "What tools help with natural language understanding?"</li>
+      </ul>
+      <button onclick="hideExamples()" class="mt-6 bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">Close</button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/mermaid@10.0.0/dist/mermaid.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
