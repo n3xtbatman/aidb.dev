@@ -23,6 +23,9 @@
     #autocompleteResults div:hover {
       background-color: #f3f4f6;
     }
+    #flowchart svg {
+      max-width: 100%;
+    }
   </style>
 </head>
 <body class="bg-white text-gray-900 font-sans">
@@ -36,7 +39,7 @@
       <p class="mt-4 text-sm text-blue-500 cursor-pointer" onclick="showExamples()">Example Prompts</p>
     </div>
 
-    <div id="flowchart" class="mt-12 flex justify-center"></div>
+    <div id="flowchart" class="mt-12 flex justify-center w-full overflow-x-auto"></div>
   </div>
 
   <!-- Modal -->
