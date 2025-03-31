@@ -64,7 +64,10 @@ window.onload = () => {
 
     // ✅ Safely inject and render Mermaid
     document.getElementById("flowchart").innerHTML = `<pre class="mermaid">${diagram}</pre>`;
-    mermaid.init(undefined, "#flowchart");
+setTimeout(() => {
+  mermaid.init(undefined, "#flowchart");
+}, 0);
+
   }
 
   window.generateFlowchart = generateFlowchart;
