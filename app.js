@@ -1,6 +1,7 @@
 window.onload = () => {
   console.log("✅ app.js loaded");
 
+  // Show/hide example prompt modal
   function showExamples() {
     document.getElementById("exampleModal").classList.remove("hidden");
   }
@@ -9,19 +10,28 @@ window.onload = () => {
     document.getElementById("exampleModal").classList.add("hidden");
   }
 
-  // Load tool data
+  // Make functions globally accessible from HTML
+  window.showExamples = showExamples;
+  window.hideExamples = hideExamples;
+
+  // Load the tool database
   let toolData = [];
 
   fetch('data/AIDB.json')
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to fetch AIDB.json");
+      return res.json();
+    })
     .then(data => {
       toolData = data;
       console.log("✅ Loaded AIDB.json:", toolData);
     })
     .catch(err => {
       console.error("❌ Error loading AIDB.json:", err);
+      document.getElementById("flowchart").innerHTML = "<p class='text-red-600 mt-4'>Failed to load tools. Check the console.</p>";
     });
 
+  // Main flowchart generation function
   function generateFlowchart() {
     console.log("🟢 Generate button clicked");
 
@@ -45,24 +55,22 @@ window.onload = () => {
 
     let diagram = 'graph TD\n    Start["User Prompt"]\n';
     matchedTools.forEach((tool, i) => {
-      const label = `${tool.Name}`;
-      diagram += `    Tool${i}["${label}"]\n`;
+      diagram += `    Tool${i}["${tool.Name}"]\n`;
       diagram += `    Start --> Tool${i}\n`;
     });
 
-    // Mermaid render
+    // Safe Mermaid render
     if (typeof mermaid !== "undefined") {
+      mermaid.initialize({ startOnLoad: false }); // Ensure it's ready
       mermaid.render('generatedFlowchart', diagram, svg => {
         flowchartEl.innerHTML = svg;
       });
     } else {
-      console.error("❌ Mermaid is not loaded");
+      console.error("❌ Mermaid is not defined");
       flowchartEl.innerHTML = "<p class='text-red-600 mt-4'>Mermaid.js failed to load.</p>";
     }
   }
 
-  // Attach function to global window so HTML can see it
+  // Expose this globally so the HTML button can call it
   window.generateFlowchart = generateFlowchart;
-  window.showExamples = showExamples;
-  window.hideExamples = hideExamples;
 };
