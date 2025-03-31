@@ -56,8 +56,8 @@ window.onload = () => {
       return;
     }
 
-    // ✅ Add Mermaid 11 diagram header
-    let diagram = '%%{init: { "theme": "default" }}%%\ngraph TD\nStart["User Prompt"]\n';
+    // ✅ Mermaid v11.6+ requires diagram type as first line (NO init block)
+    let diagram = 'graph TD\nStart["User Prompt"]\n';
     matchedTools.forEach((tool, i) => {
       diagram += `Tool${i}["${tool.Name}"]\n`;
       diagram += `Start --> Tool${i}\n`;
