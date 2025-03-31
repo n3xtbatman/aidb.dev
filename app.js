@@ -35,6 +35,10 @@ window.onload = () => {
       document.getElementById("flowchart").innerHTML = "<p class='text-red-600 mt-4'>Failed to load tools. Check the console.</p>";
     });
 
+  function sanitizeName(name) {
+    return name.replace(/[^a-zA-Z0-9]/g, "_");
+  }
+
   function generateFlowchart() {
     console.log("🟢 Generate button clicked");
 
@@ -56,20 +60,14 @@ window.onload = () => {
       return;
     }
 
-    // ✅ Mermaid v11.6.0 requires "graph TD" at start and no wrapping
-    let diagram = 'graph TD\nStart["User Prompt"]\n';
+    let diagram = 'graph TD\nStart(User Prompt)\n';
     matchedTools.forEach((tool, i) => {
-      diagram += `Tool${i}["${tool.Name}"]\n`;
-      diagram += `Start --> Tool${i}\n`;
+      const id = sanitizeName(tool.Name);
+      diagram += `${id}(${tool.Name})\nStart --> ${id}\n`;
     });
 
-    const graphHtml = `<div class="mermaid">${diagram}</div>`;
-    flowchartEl.innerHTML = graphHtml;
-
-    // ✅ Force render with Mermaid.run()
-    setTimeout(() => {
-      mermaid.run();
-    }, 0);
+    flowchartEl.innerHTML = `<div class="mermaid">${diagram}</div>`;
+    mermaid.run(); // ✅ Works in Mermaid 11+
   }
 
   window.generateFlowchart = generateFlowchart;
