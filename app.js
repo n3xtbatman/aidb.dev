@@ -62,9 +62,16 @@ window.onload = () => {
     // Safe Mermaid render
     if (typeof mermaid !== "undefined") {
       mermaid.initialize({ startOnLoad: false }); // Ensure it's ready
-      mermaid.render('generatedFlowchart', diagram, svg => {
-        flowchartEl.innerHTML = svg;
-      });
+if (typeof mermaid !== "undefined") {
+  mermaid.initialize({ startOnLoad: false });
+  mermaid.render('generatedFlowchart', diagram, svg => {
+    flowchartEl.innerHTML = svg;
+  });
+} else {
+  console.error("❌ Mermaid is not defined");
+  flowchartEl.innerHTML = "<p class='text-red-600 mt-4'>Mermaid.js failed to load.</p>";
+}
+
     } else {
       console.error("❌ Mermaid is not defined");
       flowchartEl.innerHTML = "<p class='text-red-600 mt-4'>Mermaid.js failed to load.</p>";
