@@ -20,8 +20,8 @@ window.onload = () => {
       return res.json();
     })
     .then(data => {
-      // ✅ FIXED HERE: grab Sheet1 if present
-      toolData = Array.isArray(data) ? data : data.Sheet1 || [];
+      // ✅ CONVERT Sheet1 object to array
+      toolData = Array.isArray(data) ? data : Object.values(data.Sheet1 || {});
       console.log("✅ Loaded AIDB.json:", toolData);
     })
     .catch(err => {
