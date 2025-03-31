@@ -60,14 +60,18 @@ window.onload = () => {
       return;
     }
 
-    let diagram = 'graph TD\nStart(User Prompt)\n';
+    // ✅ Diagram must begin with this line!
+    let diagram = 'graph TD\nStart["User Prompt"]\n';
     matchedTools.forEach((tool, i) => {
       const id = sanitizeName(tool.Name);
-      diagram += `${id}(${tool.Name})\nStart --> ${id}\n`;
+      diagram += `${id}["${tool.Name}"]\nStart --> ${id}\n`;
     });
 
+    // ✅ Insert diagram using a <div>, not <pre>
     flowchartEl.innerHTML = `<div class="mermaid">${diagram}</div>`;
-    mermaid.run(); // ✅ Works in Mermaid 11+
+
+    // ✅ Ensure Mermaid processes the diagram
+    mermaid.run();
   }
 
   window.generateFlowchart = generateFlowchart;
