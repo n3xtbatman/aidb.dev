@@ -1,100 +1,84 @@
 console.log("app.js loaded");
 
-let toolsData = {};
+let toolData = {};
 let categoryData = {};
 
-// Load JSON and initialize Mermaid
+// Load JSON data
 fetch("AIDB.json")
   .then((response) => response.json())
-  .then((json) => {
-    toolsData = json.Tools;
-    categoryData = json.Categories;
-    console.log("Loaded and converted AIDB.json:", {
-      tools: toolsData,
-      categories: categoryData,
-    });
-  })
-  .catch((err) => console.error("Error loading JSON:", err));
+  .then((data) => {
+    console.log("Loaded and converted AIDB.json:", data);
+    toolData = data.Tools;
+    categoryData = data.Categories;
+  });
 
-mermaid.initialize({ startOnLoad: false });
-console.log("Mermaid initialized");
-
+// Show/hide examples
 function showExamples() {
   document.getElementById("exampleModal").classList.remove("hidden");
 }
-
 function hideExamples() {
   document.getElementById("exampleModal").classList.add("hidden");
 }
 
+// Generate Flowchart
 function generateFlowchart() {
-  console.log("Generate button clicked");
   const prompt = document.getElementById("promptInput").value.toLowerCase();
   const flowchartEl = document.getElementById("flowchart");
   flowchartEl.innerHTML = "";
 
-  let matchedCategories = [];
+  console.log("Generate button clicked");
 
-  for (const [category, data] of Object.entries(categoryData)) {
-    const keywords = data.Keywords.toLowerCase().split(",");
+  const matchedCategories = [];
+
+  for (const category in categoryData) {
+    const keywords = categoryData[category].Keywords.toLowerCase().split(",");
     if (keywords.some((k) => prompt.includes(k.trim()))) {
-      matchedCategories.push({ name: category, data });
+      matchedCategories.push(category);
     }
   }
 
   if (matchedCategories.length === 0) {
     flowchartEl.innerHTML =
-      '<p class="text-red-500 text-center mt-6">No matching tools found.</p>';
+      '<p class="text-red-500 mt-6 text-lg">No matching tools found.</p>';
     return;
   }
 
-  let diagram = `graph TD
-Start["User Prompt"]
-`;
+  let diagram = `graph TD\n  Start["User Prompt"]\n`;
 
-  let classDefs = [];
-  let connections = [];
+  matchedCategories.forEach((category) => {
+    const catLabel = category.charAt(0).toUpperCase() + category.slice(1);
+    const topTool = categoryData[category]["Top Tool"];
+    const altTools = categoryData[category]["Alt Tools"]
+      ? categoryData[category]["Alt Tools"].split(",").map((t) => t.trim())
+      : [];
 
-  matchedCategories.forEach((cat, index) => {
-    const name = cat.name;
-    const top = cat.data["Top Tool"];
-    const alts = cat.data["Alt Tools"].split(",").map((a) => a.trim());
+    diagram += `  ${category}["${catLabel}"]\n`;
+    diagram += `  Start --> ${category}\n`;
 
-    const topLink = toolsData[top]?.Website || "#";
-    const altLinks = alts.map((a) => ({
-      name: a,
-      link: toolsData[a]?.Website || "#",
-    }));
+    if (toolData[topTool]) {
+      const link = toolData[topTool].Website;
+      diagram += `  ${category}_top["<a href='${link}' target='_blank'><b>${topTool}</b></a>"]\n`;
+      diagram += `  ${category} --> ${category}_top\n`;
+    }
 
-    const topNode = `${name}_top["<a href='${topLink}' target='_blank'><b>${top}</b></a>"]`;
-    diagram += `${name}["${name.charAt(0).toUpperCase() + name.slice(1)}"]
-${name}_top${topNode}
-`;
-    connections.push(`Start --> ${name}`, `${name} --> ${name}_top`);
-    classDefs.push(`class ${name}_top green;`);
-
-    altLinks.forEach((alt, i) => {
-      const nodeName = `${name}_alt_${i}`;
-      diagram += `${nodeName}["<a href='${alt.link}' target='_blank'>${alt.name}</a>"]
-`;
-      connections.push(`${name} --> ${nodeName}`);
-      classDefs.push(`class ${nodeName} gray;`);
+    altTools.forEach((alt, index) => {
+      if (toolData[alt]) {
+        const link = toolData[alt].Website;
+        const id = `${category}_alt_${index}`;
+        diagram += `  ${id}["<a href='${link}' target='_blank'>${alt}</a>"]\n`;
+        diagram += `  ${category} --> ${id}\n`;
+      }
     });
   });
 
-  diagram += connections.join("
-") + "
-";
-  diagram += "classDef green fill:#bbf7d0,stroke:#15803d,stroke-width:2px,color:#065f46,font-weight:bold;
-";
-  diagram += "classDef gray fill:#f3f4f6,stroke:#d1d5db,stroke-width:1px,color:#374151;
-";
-  diagram += classDefs.join("
-");
-
   console.log("Mermaid diagram source:\n", diagram);
 
-  mermaid.render("generatedFlowchart", diagram, (svgCode) => {
-    flowchartEl.innerHTML = svgCode;
-  });
+  try {
+    mermaid.render("generatedFlowchart", diagram, (svgCode) => {
+      flowchartEl.innerHTML = svgCode;
+    });
+  } catch (err) {
+    console.error(err);
+    flowchartEl.innerHTML = `<p class="text-red-500 mt-6 text-lg">Error rendering diagram.</p>`;
+  }
 }
