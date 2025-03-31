@@ -1,6 +1,14 @@
 window.onload = () => {
   console.log("✅ app.js loaded");
 
+  // ✅ Initialize Mermaid once on page load
+  if (typeof mermaid !== "undefined") {
+    mermaid.initialize({ startOnLoad: false });
+    console.log("✅ Mermaid initialized");
+  } else {
+    console.error("❌ Mermaid script not found!");
+  }
+
   function showExamples() {
     document.getElementById("exampleModal").classList.remove("hidden");
   }
@@ -20,9 +28,7 @@ window.onload = () => {
       return res.json();
     })
     .then(data => {
-      // FIX: Convert your JSON structure into an array properly
-      const sheetData = data.Sheet1 || {};
-      toolData = Object.entries(sheetData).map(([name, details]) => ({ Name: name, ...details }));
+      toolData = Object.entries(data.Sheet1 || {}).map(([name, details]) => ({ Name: name, ...details }));
       console.log("✅ Loaded and converted AIDB.json:", toolData);
     })
     .catch(err => {
@@ -58,7 +64,6 @@ window.onload = () => {
     });
 
     if (typeof mermaid !== "undefined") {
-      mermaid.initialize({ startOnLoad: false });
       mermaid.render('generatedFlowchart', diagram, svg => {
         flowchartEl.innerHTML = svg;
       });
