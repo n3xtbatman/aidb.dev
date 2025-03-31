@@ -36,6 +36,7 @@ window.onload = async () => {
 function showExamples() {
   document.getElementById("exampleModal").classList.remove("hidden");
 }
+
 function hideExamples() {
   document.getElementById("exampleModal").classList.add("hidden");
 }
@@ -54,6 +55,7 @@ function showAutocomplete(input) {
   resultsEl.innerHTML = matches.map(m => `<div onclick="selectAutocomplete('${m}')">${m}</div>`).join('');
   resultsEl.classList.remove("hidden");
 }
+
 function selectAutocomplete(value) {
   document.getElementById("promptInput").value = value;
   document.getElementById("autocompleteResults").classList.add("hidden");
@@ -73,7 +75,15 @@ function simplifyPrompt(prompt) {
 
 function generateFlowchart() {
   const input = document.getElementById("promptInput").value.toLowerCase();
-  const flowchartEl = document.getElementById("flowchart").firstElementChild;
+  const flowchartWrapper = document.getElementById("flowchart");
+  let flowchartEl = flowchartWrapper.firstElementChild;
+
+  // Safely create inner container if needed
+  if (!flowchartEl) {
+    flowchartEl = document.createElement("div");
+    flowchartWrapper.appendChild(flowchartEl);
+  }
+
   const matchedCategories = [];
 
   for (const [category, data] of Object.entries(categoryData)) {
