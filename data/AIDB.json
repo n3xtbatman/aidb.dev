@@ -2,52 +2,59 @@
   "Tools": {
     "ChatGPT": {
       "Description": "Text generation and Q&A",
-      "Category": "NLP",
+      "Category": "nlp",
       "Use Cases": "chatbot, tutor, assistant",
       "Logo URL": "https://logo.url/chatgpt.png",
       "Website": "https://openai.com/chatgpt"
     },
     "DALL·E": {
       "Description": "Image generation from text prompts",
-      "Category": "Image Generation",
+      "Category": "image generation",
       "Use Cases": "art, design, mockups",
       "Logo URL": "https://logo.url/dalle.png",
       "Website": "https://openai.com/dall-e"
     },
     "Whisper": {
       "Description": "Speech-to-text transcription",
-      "Category": "Audio",
+      "Category": "audio",
       "Use Cases": "subtitles, meetings",
       "Logo URL": "https://logo.url/whisper.png",
       "Website": "https://openai.com/whisper"
     },
     "Midjourney": {
       "Description": "Artistic image generation",
-      "Category": "Image Generation",
+      "Category": "image generation",
       "Use Cases": "concept art, storytelling",
       "Logo URL": "https://logo.url/mj.png",
       "Website": "https://midjourney.com"
     },
     "GitHub Copilot": {
       "Description": "Code help",
-      "Category": "Code",
+      "Category": "code",
       "Use Cases": "code, design",
       "Logo URL": "https://logo.url/mj.png",
       "Website": "https://www.github.com/"
     },
     "Soundraw": {
       "Description": "Sound Help",
-      "Category": "Audio",
+      "Category": "audio",
       "Use Cases": "art, sound",
       "Logo URL": "https://logo.url/mj.png",
       "Website": "https://www.google.com/"
+    },
+    "Chadwick Art": {
+      "Description": "Image generation from text prompts",
+      "Category": "image generation",
+      "Use Cases": "art, design, mockups",
+      "Logo URL": "https://logo.url/dalle.png",
+      "Website": "https://openai.com/dall-e"
     }
   },
   "Categories": {
     "art": {
       "Keywords": "game, draw, design, graphic",
       "Top Tool": "DALL·E",
-      "Alt Tools": "Midjourney"
+      "Alt Tools": "Midjourney, Chadwick Art"
     },
     "code": {
       "Keywords": "website, app, build, game",
