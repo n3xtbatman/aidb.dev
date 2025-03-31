@@ -1,3 +1,10 @@
+console.log("✅ app.js loaded");
+
+function showExamples() {
+  document.getElementById("exampleModal").classList.remove("hidden");
+}
+...
+
 // Keep these — unchanged
 function showExamples() {
   document.getElementById("exampleModal").classList.remove("hidden");
