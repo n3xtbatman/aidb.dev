@@ -26,6 +26,14 @@
     #flowchart svg {
       width: 100%;
     }
+    #flowchart-container {
+      display: flex;
+      justify-content: center;
+      overflow-x: auto;
+    }
+    #flowchart > div {
+      width: 1000px;
+    }
   </style>
 </head>
 <body class="bg-white text-gray-900 font-sans">
@@ -39,7 +47,9 @@
       <p class="mt-4 text-sm text-blue-500 cursor-pointer" onclick="showExamples()">Example Prompts</p>
     </div>
 
-    <div id="flowchart" class="mt-12 w-full overflow-x-auto"><div class="mx-auto" style="max-width: 1000px;"></div></div>
+    <div id="flowchart-container" class="mt-12">
+      <div id="flowchart"></div>
+    </div>
   </div>
 
   <!-- Modal -->
@@ -56,8 +66,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.0/dist/mermaid.min.js"></script>
-  <script>
-    // JavaScript remains unchanged
-  </script>
+  <script src="app.js" defer></script>
 </body>
 </html>
