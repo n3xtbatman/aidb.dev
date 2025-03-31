@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Flowchart Generator</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     #autocompleteResults {
       position: absolute;
@@ -31,8 +31,10 @@
       justify-content: center;
       overflow-x: auto;
     }
-    #flowchart > div {
-      width: 1000px;
+    #flowchart-inner {
+      min-width: 700px;
+      max-width: 1000px;
+      margin: 0 auto;
     }
   </style>
 </head>
@@ -40,17 +42,19 @@
   <div class="container mx-auto py-16 px-4 text-center">
     <h1 class="text-3xl font-bold mb-8">Generate a Flowchart</h1>
 
-    <div class="max-w-2xl mx-auto relative flex gap-2">
-      <input id="promptInput" type="text" placeholder="Type your prompt..." class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" oninput="showAutocomplete(this.value)" onkeydown="if(event.key === 'Enter') generateFlowchart()" />
-      <button onclick="generateFlowchart()" class="bg-blue-600 text-white px-6 rounded-lg hover:bg-blue-700 transition">Generate</button>
-      <div id="autocompleteResults" class="absolute top-full left-0 right-0 hidden"></div>
+    <div class="max-w-2xl mx-auto relative flex gap-4 items-start">
+      <div class="relative w-full">
+        <input id="promptInput" type="text" placeholder="Type your prompt..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" oninput="showAutocomplete(this.value)" onkeydown="if(event.key === 'Enter') generateFlowchart()" />
+        <div id="autocompleteResults" class="hidden"></div>
+      </div>
+      <button onclick="generateFlowchart()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">Generate</button>
     </div>
 
     <p class="mt-4 text-sm text-blue-500 cursor-pointer" onclick="showExamples()">Example Prompts</p>
 
     <div id="flowchart-container" class="mt-12">
       <div id="flowchart">
-        <div id="flowchart-inner" class="mx-auto" style="max-width: 1000px;"></div>
+        <div id="flowchart-inner" class="mx-auto"></div>
       </div>
     </div>
   </div>
@@ -62,7 +66,7 @@
       <ul class="text-left space-y-2">
         <li>🎮 "I want to make a game"</li>
         <li>🎨 "What tools generate concept art?"</li>
-        <li>🎷 "Find AI music generators"</li>
+        <li>🎧 "Find AI music generators"</li>
       </ul>
       <button onclick="hideExamples()" class="mt-6 bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">Close</button>
     </div>
