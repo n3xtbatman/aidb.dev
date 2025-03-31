@@ -116,7 +116,7 @@ function generateFlowchart() {
       const altTool = toolData[alt];
       const altId = `${idPrefix}_alt_${i}`;
       const label = altTool ? `<a href='${altTool.Website}' target='_blank'>${alt}</a>` : alt;
-      diagram += `${idPrefix} --> ${altId}["${label}"]\n`;
+      diagram += `${topId} --> ${altId}["${label}"]\n`; // ← stack under top tool
       diagram += `class ${altId} alt;\n`;
     });
   });
