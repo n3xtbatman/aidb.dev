@@ -1,83 +1,61 @@
-let toolData = {};
-let categoryData = {};
-
-window.onload = async () => {
-  console.log("app.js loaded");
-  try {
-    const response = await fetch("data/AIDB.json");
-    const json = await response.json();
-    toolData = json.Tools || {};
-    categoryData = json.Categories || {};
-    console.log("Loaded and parsed AIDB.json:", { toolData, categoryData });
-  } catch (error) {
-    console.error("Error loading AIDB.json:", error);
-  }
-};
-
-function showExamples() {
-  document.getElementById("exampleModal").classList.remove("hidden");
-}
-
-function hideExamples() {
-  document.getElementById("exampleModal").classList.add("hidden");
-}
-
-function generateFlowchart() {
-  const input = document.getElementById("promptInput").value.toLowerCase();
-  const flowchartEl = document.getElementById("flowchart");
-
-  const matchedCategories = [];
-
-  for (const [category, data] of Object.entries(categoryData)) {
-    const keywords = data.Keywords.toLowerCase().split(",").map(k => k.trim());
-    if (keywords.some(keyword => input.includes(keyword))) {
-      matchedCategories.push({ category, ...data });
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Flowchart Generator</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    #autocompleteResults {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 50;
+      text-align: left;
     }
-  }
+    #autocompleteResults div {
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+    #autocompleteResults div:hover {
+      background-color: #f3f4f6;
+    }
+    #flowchart svg {
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-900 font-sans">
+  <div class="container mx-auto py-16 px-4 text-center">
+    <h1 class="text-3xl font-bold mb-8">Generate a Flowchart</h1>
 
-  if (matchedCategories.length === 0) {
-    flowchartEl.innerHTML = `<p class="text-red-600">No matching tools found.</p>`;
-    return;
-  }
+    <div class="max-w-xl mx-auto relative">
+      <input id="promptInput" type="text" placeholder="Type your prompt..." class="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400" oninput="showAutocomplete(this.value)" onkeydown="if(event.key === 'Enter') generateFlowchart()" />
+      <div id="autocompleteResults" class="hidden"></div>
+      <button onclick="generateFlowchart()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">Generate Flowchart</button>
+      <p class="mt-4 text-sm text-blue-500 cursor-pointer" onclick="showExamples()">Example Prompts</p>
+    </div>
 
-  // Build Mermaid diagram
-  let diagram = "graph TD\n";
-  diagram += `Start["User Prompt"]\n`;
+    <div id="flowchart" class="mt-12 w-full overflow-x-auto"><div class="mx-auto" style="max-width: 1000px;"></div></div>
+  </div>
 
-  const nodes = [];
+  <!-- Modal -->
+  <div id="exampleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md">
+      <h2 class="text-xl font-semibold mb-4">Example Prompts</h2>
+      <ul class="text-left space-y-2">
+        <li>🎮 "I want to make a game"</li>
+        <li>🎨 "What tools generate concept art?"</li>
+        <li>🎧 "Find AI music generators"</li>
+      </ul>
+      <button onclick="hideExamples()" class="mt-6 bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">Close</button>
+    </div>
+  </div>
 
-  matchedCategories.forEach((match, index) => {
-    const idPrefix = match.category.toLowerCase();
-    const topToolName = match["Top Tool"];
-    const altToolNames = (match["Alt Tools"] || "").split(",").map(t => t.trim());
-
-    const topTool = toolData[topToolName];
-    const topToolLabel = `<b>${topToolName}</b>`;
-    const topToolUrl = topTool?.Website || "#";
-
-    const topId = `${idPrefix}_top`;
-    nodes.push(`${idPrefix}["${match.category.charAt(0).toUpperCase() + match.category.slice(1)}"]`);
-    nodes.push(`${topId}["<a href='${topToolUrl}' target='_blank'>${topToolLabel}</a>"]`);
-    diagram += `Start --> ${idPrefix}\n${idPrefix} --> ${topId}\n`;
-
-    altToolNames.forEach((alt, i) => {
-      const altTool = toolData[alt];
-      const altId = `${idPrefix}_alt_${i}`;
-      const label = altTool ? `<a href='${altTool.Website}' target='_blank'>${alt}</a>` : alt;
-      nodes.push(`${altId}["${label}"]`);
-      diagram += `${idPrefix} --> ${altId}\n`;
-    });
-
-    diagram += `class ${topId} top;\n`;
-    altToolNames.forEach((_, i) => diagram += `class ${idPrefix}_alt_${i} alt;\n`);
-  });
-
-  // Add class defs
-  diagram += `
-classDef top fill:#bbf7d0,stroke:#22c55e,stroke-width:2px,color:#064e3b,font-weight:bold;
-classDef alt fill:#e5e7eb,stroke:#6b7280,stroke-width:1px,color:#374151;
-`;
-
-  flowchartEl.innerHTML = `<div class="mermaid">${diagram}</div>`;
-  mermaid.run();
-}
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.0/dist/mermaid.min.js"></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
