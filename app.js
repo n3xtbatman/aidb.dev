@@ -38,13 +38,13 @@ window.onload = () => {
     });
 
   function sanitizeId(str) {
-    return str.replace(/[^a-zA-Z0-9]/g, "_");
+    return str.toLowerCase().replace(/[^a-z0-9]/g, "_");
   }
 
   function generateFlowchart() {
     console.log("🟢 Generate button clicked");
 
-    const prompt = document.getElementById("promptInput").value.toLowerCase();
+    const prompt = document.getElementById("promptInput").value.toLowerCase().trim();
     const flowchartEl = document.getElementById("flowchart");
 
     if (!Object.keys(categories).length || !Object.keys(tools).length) {
@@ -88,7 +88,7 @@ window.onload = () => {
 
       const altTools = (categories[cat]["Alt Tools"] || "").split(',').map(t => t.trim()).filter(t => t && t !== topToolName);
       altTools.forEach((alt, j) => {
-        const altId = sanitizeId(`${cat}_alt_${j}`);
+        const altId = sanitizeId(`${cat}_alt_${j}_${alt}`);
         const altUrl = tools[alt]?.Website || "#";
         diagram += `${altId}["<a href='${altUrl}' target='_blank'>${alt}</a>"]\n`;
         links.push(`${catId} --> ${altId}`);
@@ -101,7 +101,7 @@ window.onload = () => {
     diagram += "classDef gray fill:#e5e7eb,stroke:#6b7280,stroke-width:1px,color:#374151;\n";
     diagram += "class " + nodeStyles.join(", ") + ";\n";
 
-    console.log("🧪 Mermaid Diagram:\n", diagram);
+    console.log("🧪 Mermaid diagram source:\n", diagram);
     flowchartEl.innerHTML = `<div class="mermaid">${diagram}</div>`;
 
     setTimeout(() => {
