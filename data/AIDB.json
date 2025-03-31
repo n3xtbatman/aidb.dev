@@ -1,27 +1,27 @@
 {
-  "AIDB": {
-    "ElevenLabs": {
-      "Category": "audio",
-      "Subcategory": "music",
-      "Primary?": false,
-      "Function / Use": "Audio enhancement & cleanup",
-      "Website": "https://elevenlabs.io",
-      "Logo URL": "https://logo.url/11labs.png",
-      "Description": "Natural-sounding voice synthesis"
-    },
+  "Tools": {
     "Soundraw": {
       "Category": "audio",
       "Subcategory": "music",
-      "Primary?": true,
+      "Primary": true,
       "Function / Use": "Generate background music",
       "Website": "https://soundraw.io",
       "Logo URL": "https://logo.url/soundraw.png",
       "Description": "AI music generation"
     },
+    "ElevenLabs": {
+      "Category": "audio",
+      "Subcategory": "music",
+      "Primary": false,
+      "Function / Use": "Audio enhancement & cleanup",
+      "Website": "https://elevenlabs.io",
+      "Logo URL": "https://logo.url/11labs.png",
+      "Description": "Natural-sounding voice synthesis"
+    },
     "DALL-E": {
       "Category": "image",
       "Subcategory": "2D image",
-      "Primary?": true,
+      "Primary": true,
       "Function / Use": "Generate art from text",
       "Website": "https://openai.com/dall-e",
       "Logo URL": "https://logo.url/dalle.png",
@@ -30,7 +30,7 @@
     "Midjourney": {
       "Category": "image",
       "Subcategory": "2D image",
-      "Primary?": false,
+      "Primary": false,
       "Function / Use": "Stylized concept art",
       "Website": "https://midjourney.com",
       "Logo URL": "https://logo.url/midjourney.png",
@@ -39,7 +39,7 @@
     "GitHub Copilot": {
       "Category": "code",
       "Subcategory": "code",
-      "Primary?": true,
+      "Primary": true,
       "Function / Use": "Code completion and generation",
       "Website": "https://github.com/features/copilot",
       "Logo URL": "https://logo.url/copilot.png",
