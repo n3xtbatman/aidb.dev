@@ -20,9 +20,10 @@ window.onload = () => {
       return res.json();
     })
     .then(data => {
-      // ✅ CONVERT Sheet1 object to array
-      toolData = Array.isArray(data) ? data : Object.values(data.Sheet1 || {});
-      console.log("✅ Loaded AIDB.json:", toolData);
+      // FIX: Convert your JSON structure into an array properly
+      const sheetData = data.Sheet1 || {};
+      toolData = Object.entries(sheetData).map(([name, details]) => ({ Name: name, ...details }));
+      console.log("✅ Loaded and converted AIDB.json:", toolData);
     })
     .catch(err => {
       console.error("❌ Error loading AIDB.json:", err);
