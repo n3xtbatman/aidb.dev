@@ -113,18 +113,14 @@ function generateFlowchart() {
       diagram += `${idPrefix} --> ${subcatId}\n`;
       diagram += `${subcatId}["${subcatName.toUpperCase()}"]\n`;
 
-      const topTool = toolData[subcatData["Top Tool"]];
-      if (topTool) {
-        const topId = `${subcatId}_top`;
-        diagram += `${subcatId} --> ${topId}["<a href='${topTool.Website}' target='_blank'><b>${subcatData["Top Tool"]}</b></a>"]\n`;
-        diagram += `class ${topId} top;\n`;
-      }
-
-      (subcatData["Alt Tools"] || "").split(",").map(t => t.trim()).forEach((alt, i) => {
-        if (!alt) return;
-        const altId = `${subcatId}_alt_${i}`;
-        diagram += `${subcatId}_top --> ${altId}["${alt}"]\n`;
-        diagram += `class ${altId} alt;\n`;
+      const tools = subcatData.Tools || [];
+      tools.forEach((tool, i) => {
+        const toolRef = toolData[tool.Name];
+        const toolId = `${subcatId}_tool_${i}`;
+        const label = toolRef ? `<a href='${toolRef.Website}' target='_blank'><b>${tool.Name}</b><br/>${tool.Function}</a>` : tool.Name;
+        const boxType = tool.Primary ? "top" : "alt";
+        diagram += `${subcatId} --> ${toolId}["${label}"]\n`;
+        diagram += `class ${toolId} ${boxType};\n`;
       });
     });
   });
