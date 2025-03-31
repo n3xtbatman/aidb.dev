@@ -1,7 +1,6 @@
 window.onload = () => {
   console.log("✅ app.js loaded");
 
-  // Show/hide modal
   function showExamples() {
     document.getElementById("exampleModal").classList.remove("hidden");
   }
@@ -10,11 +9,9 @@ window.onload = () => {
     document.getElementById("exampleModal").classList.add("hidden");
   }
 
-  // Make available to HTML
   window.showExamples = showExamples;
   window.hideExamples = hideExamples;
 
-  // Load AIDB.json
   let toolData = [];
 
   fetch('data/AIDB.json')
@@ -23,7 +20,8 @@ window.onload = () => {
       return res.json();
     })
     .then(data => {
-      toolData = data.Sheet1 || [];
+      // ✅ FIXED HERE: grab Sheet1 if present
+      toolData = Array.isArray(data) ? data : data.Sheet1 || [];
       console.log("✅ Loaded AIDB.json:", toolData);
     })
     .catch(err => {
@@ -37,7 +35,7 @@ window.onload = () => {
     const prompt = document.getElementById("promptInput").value.toLowerCase();
     const flowchartEl = document.getElementById("flowchart");
 
-    if (!toolData || toolData.length === 0) {
+    if (!Array.isArray(toolData) || toolData.length === 0) {
       flowchartEl.innerHTML = "<p class='text-red-600 mt-4'>Tool database not loaded yet.</p>";
       return;
     }
