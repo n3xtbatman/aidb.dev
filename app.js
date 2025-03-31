@@ -75,13 +75,10 @@ function simplifyPrompt(prompt) {
 
 function generateFlowchart() {
   const input = document.getElementById("promptInput").value.toLowerCase();
-  const flowchartWrapper = document.getElementById("flowchart");
-  let flowchartEl = flowchartWrapper.firstElementChild;
-
-  // Safely create inner container if needed
+  const flowchartEl = document.getElementById("flowchart-inner");
   if (!flowchartEl) {
-    flowchartEl = document.createElement("div");
-    flowchartWrapper.appendChild(flowchartEl);
+    console.error("Missing #flowchart-inner element");
+    return;
   }
 
   const matchedCategories = [];
@@ -102,7 +99,7 @@ function generateFlowchart() {
   const rootLabel = simplifyPrompt(input);
   diagram += `Start["${rootLabel}"]\n`;
 
-  matchedCategories.forEach((match, index) => {
+  matchedCategories.forEach((match) => {
     const idPrefix = match.category.toLowerCase();
     const topToolName = match["Top Tool"];
     const altToolNames = (match["Alt Tools"] || "").split(",").map(t => t.trim());
