@@ -127,7 +127,8 @@ function generateFlowchart() {
 
         altTools.forEach((altTool, i) => {
           const altId = `${topId}_alt_${i}`;
-          diagram += `${altId}["${altTool.Name}<br/>${altTool.Function}"]\n`;
+          const altLabel = `${altTool.Name}<br/>${altTool.Function}`;
+          diagram += `${altId}["${altLabel}"]\n`;
           diagram += `class ${altId} alt;\n`;
         });
       }
