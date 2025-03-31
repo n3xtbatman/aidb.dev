@@ -34,7 +34,7 @@
     #flowchart > div {
       margin: 0 auto;
       width: fit-content;
-      max-width: 1000px;
+      min-width: 1000px;
     }
   </style>
 </head>
@@ -42,7 +42,7 @@
   <div class="container mx-auto py-16 px-4 text-center">
     <h1 class="text-3xl font-bold mb-8">Generate a Flowchart</h1>
 
-    <div class="max-w-xl mx-auto relative flex gap-2 mb-4">
+    <div class="max-w-3xl mx-auto flex gap-2 mb-4">
       <div class="flex-1 relative">
         <input id="promptInput" type="text" placeholder="Type your prompt..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" oninput="showAutocomplete(this.value)" onkeydown="if(event.key === 'Enter') generateFlowchart()" />
         <div id="autocompleteResults" class="hidden absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded shadow-md z-50"></div>
