@@ -30,7 +30,7 @@ window.onload = () => {
     .then(data => {
       tools = data.Tools || {};
       categories = data.Categories || {};
-      console.log("✅ Loaded and parsed AIDB.json");
+      console.log("✅ Loaded and converted AIDB.json:", { tools, categories });
     })
     .catch(err => {
       console.error("❌ Error loading AIDB.json:", err);
@@ -55,20 +55,20 @@ window.onload = () => {
     const matchedCategories = [];
 
     for (const [cat, info] of Object.entries(categories)) {
-      const keywords = info["Keywords"].toLowerCase().split(',').map(k => k.trim());
-      if (keywords.some(k => prompt.includes(k))) {
+      const keywords = (info["Keywords"] || "").toLowerCase().split(',').map(k => k.trim());
+      const matches = keywords.some(k => prompt.includes(k));
+      if (matches) {
         matchedCategories.push(cat);
       }
     }
 
     if (matchedCategories.length === 0) {
-      flowchartEl.innerHTML = "<p class='text-red-600 mt-4'>No relevant categories found for this prompt.</p>";
+      flowchartEl.innerHTML = "<p class='text-red-600 mt-4'>No matching tools found.</p>";
       return;
     }
 
-    // Start diagram
     let diagram = "graph TD\n";
-    diagram += `Start["Your Prompt"]\n`;
+    diagram += `Start["User Prompt"]\n`;
 
     const nodeStyles = [];
     const links = [];
