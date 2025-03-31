@@ -1,7 +1,7 @@
 window.onload = () => {
   console.log("✅ app.js loaded");
 
-  // Show/hide example prompts modal
+  // Show/hide modal
   function showExamples() {
     document.getElementById("exampleModal").classList.remove("hidden");
   }
@@ -10,7 +10,7 @@ window.onload = () => {
     document.getElementById("exampleModal").classList.add("hidden");
   }
 
-  // Expose to HTML
+  // Make available to HTML
   window.showExamples = showExamples;
   window.hideExamples = hideExamples;
 
@@ -23,7 +23,7 @@ window.onload = () => {
       return res.json();
     })
     .then(data => {
-      toolData = data;
+      toolData = data.Sheet1 || [];
       console.log("✅ Loaded AIDB.json:", toolData);
     })
     .catch(err => {
@@ -58,7 +58,6 @@ window.onload = () => {
       diagram += `    Start --> Tool${i}\n`;
     });
 
-    // Safe Mermaid render
     if (typeof mermaid !== "undefined") {
       mermaid.initialize({ startOnLoad: false });
       mermaid.render('generatedFlowchart', diagram, svg => {
@@ -70,6 +69,5 @@ window.onload = () => {
     }
   }
 
-  // Expose to button
   window.generateFlowchart = generateFlowchart;
 };
