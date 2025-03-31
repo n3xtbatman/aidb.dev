@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Flowchart Generator</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  
+  <!-- ✅ Load Mermaid.js HERE (in head) -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 </head>
 <body class="bg-white text-gray-900 font-sans">
   <div class="container mx-auto py-16 px-4 text-center">
     <h1 class="text-3xl font-bold mb-8">Generate a Flowchart</h1>
-    
+
     <div class="max-w-xl mx-auto">
       <input id="promptInput" type="text" placeholder="Type your prompt..." class="w-full px-4 py-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400" />
       <button onclick="generateFlowchart()" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">Generate Flowchart</button>
@@ -34,7 +36,7 @@
     </div>
   </div>
 
-<script src="https://unpkg.com/mermaid@10.0.0/dist/mermaid.min.js" defer></script>
-<script src="app.js" defer></script>
+  <!-- ✅ Load app.js at bottom -->
+  <script src="app.js"></script>
 </body>
 </html>
