@@ -1,5 +1,5 @@
 {
-  "Sheet1": {
+  "Tools": {
     "ChatGPT": {
       "Description": "Text generation and Q&A",
       "Category": "NLP",
@@ -27,6 +27,23 @@
       "Use Cases": "concept art, storytelling",
       "Logo URL": "https://logo.url/mj.png",
       "Website": "https://midjourney.com"
+    }
+  },
+  "Categories": {
+    "art": {
+      "Keywords": "game, draw, design, graphic",
+      "Top Tool": "DALL·E",
+      "Alt Tools": "Midjourney"
+    },
+    "code": {
+      "Keywords": "website, app, build, game",
+      "Top Tool": "GitHub Copilot",
+      "Alt Tools": "Codex"
+    },
+    "sound": {
+      "Keywords": "music, fx, audio, game",
+      "Top Tool": "Soundraw",
+      "Alt Tools": "Aiva, Boomy"
     }
   }
 }
