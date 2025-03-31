@@ -60,18 +60,28 @@ window.onload = () => {
       return;
     }
 
-    // ✅ Diagram must begin with this line!
-    let diagram = 'graph TD\nStart["User Prompt"]\n';
+    let diagram = 'graph TD\n';
+    diagram += 'Start["User Prompt"]\n';
+
     matchedTools.forEach((tool, i) => {
-      const id = sanitizeName(tool.Name);
-      diagram += `${id}["${tool.Name}"]\nStart --> ${id}\n`;
+      const id = sanitizeName(tool.Name || `Tool${i}`);
+      diagram += `${id}["${tool.Name}"]\n`;
+      diagram += `Start --> ${id}\n`;
     });
 
-    // ✅ Insert diagram using a <div>, not <pre>
+    console.log("🧪 Mermaid diagram source:\n", diagram);
+
     flowchartEl.innerHTML = `<div class="mermaid">${diagram}</div>`;
 
-    // ✅ Ensure Mermaid processes the diagram
-    mermaid.run();
+    // Make sure diagram is fully injected before rendering
+    setTimeout(() => {
+      try {
+        mermaid.run();
+      } catch (err) {
+        console.error("❌ Mermaid render error:", err);
+        flowchartEl.innerHTML = "<p class='text-red-600 mt-4'>Failed to render diagram.</p>";
+      }
+    }, 0);
   }
 
   window.generateFlowchart = generateFlowchart;
