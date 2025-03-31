@@ -1,5 +1,4 @@
 let toolData = {};
-let categoryData = {};
 let simplifiedPrompts = [
   "Create Game", "Generate Art", "Build Website", "Train Model", "Analyze Text", "Make Music", "Transcribe Audio",
   "Design Logo", "Build App", "Write Story", "Create Presentation", "Summarize Article", "Translate Text",
@@ -24,9 +23,8 @@ window.onload = async () => {
   try {
     const response = await fetch("data/AIDB.json");
     const json = await response.json();
-    toolData = json.Tools || {};
-    categoryData = json.Categories || {};
-    console.log("Loaded and converted AIDB.json:", { toolData, categoryData });
+    toolData = json.Sheet11 || {};
+    console.log("Loaded tools:", toolData);
   } catch (error) {
     console.error("Error loading AIDB.json:", error);
   }
@@ -74,64 +72,38 @@ function simplifyPrompt(prompt) {
 
 function generateFlowchart() {
   const input = document.getElementById("promptInput").value.toLowerCase();
-  const resultsEl = document.getElementById("autocompleteResults");
-  resultsEl.classList.add("hidden");
-
+  document.getElementById("autocompleteResults").classList.add("hidden");
   const flowchartEl = document.getElementById("flowchart-inner");
-  if (!flowchartEl) {
-    console.error("Missing #flowchart-inner element");
-    return;
-  }
+  flowchartEl.innerHTML = "";
 
-  const matchedCategories = [];
-
-  for (const [category, data] of Object.entries(categoryData)) {
-    const keywords = data.Keywords.toLowerCase().split(",").map(k => k.trim());
-    if (keywords.some(keyword => input.includes(keyword))) {
-      matchedCategories.push({ category, ...data });
-    }
-  }
-
-  if (matchedCategories.length === 0) {
-    flowchartEl.innerHTML = `<p class="text-red-600 text-lg">No matching tools found.</p>`;
-    return;
-  }
-
-  let diagram = "graph TD\n";
   const rootLabel = simplifyPrompt(input);
-  diagram += `Start["${rootLabel}"]\n`;
+  let diagram = `graph TD\nStart[\"${rootLabel}\"]\n`;
 
-  matchedCategories.forEach((match) => {
-    const idPrefix = match.category.toLowerCase().replace(/\s+/g, '_');
-    const subcategories = match.Subcategories || {};
+  const grouped = {};
+  for (const [toolName, tool] of Object.entries(toolData)) {
+    const key = `${tool.Category}__${tool.Subcategory}`;
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push({ name: toolName, ...tool });
+  }
 
-    diagram += `Start --> ${idPrefix}\n`;
-    diagram += `${idPrefix}["${match.category.toUpperCase()}"]\n`;
+  Object.entries(grouped).forEach(([groupKey, tools], i) => {
+    const [cat, sub] = groupKey.split("__");
+    const catId = `cat${i}`;
+    const top = tools.find(t => t["Primary?"] === true);
+    const alts = tools.filter(t => t["Primary?"] !== true);
 
-    Object.entries(subcategories).forEach(([subcatName, subcatData], subIndex) => {
-      const subcatId = `${idPrefix}_sub_${subIndex}`;
-      diagram += `${idPrefix} --> ${subcatId}\n`;
-      diagram += `${subcatId}["${subcatName.toUpperCase()}"]\n`;
+    diagram += `Start --> ${catId}[\"${cat.toUpperCase()} - ${sub}\"]\n`;
 
-      const tools = subcatData.Tools || [];
-      const topTools = tools.filter(tool => tool.Primary);
-      const altTools = tools.filter(tool => !tool.Primary);
+    if (top) {
+      const topId = `${catId}_top`;
+      diagram += `${catId} --> ${topId}[\"<a href='${top.Website}' target='_blank'><b>${top.name}</b></a><br/>${top.Description}\"]\n`;
+      diagram += `class ${topId} top;\n`;
+    }
 
-      if (topTools.length > 0) {
-        const topTool = topTools[0];
-        const topToolRef = toolData[topTool.Name];
-        const topId = `${subcatId}_top`;
-        const topLabel = topToolRef ? `<a href='${topToolRef.Website}' target='_blank'><b>${topTool.Name}</b><br/>${topTool.Function}</a>` : topTool.Name;
-        diagram += `${subcatId} --> ${topId}["${topLabel}"]\n`;
-        diagram += `class ${topId} top;\n`;
-
-        altTools.forEach((altTool, i) => {
-          const altId = `${topId}_alt_${i}`;
-          const altLabel = `${altTool.Name}<br/>${altTool.Function}`;
-          diagram += `${altId}["${altLabel}"]\n`;
-          diagram += `class ${altId} alt;\n`;
-        });
-      }
+    alts.forEach((alt, j) => {
+      const altId = `${catId}_alt${j}`;
+      diagram += `${catId} --> ${altId}[\"<a href='${alt.Website}' target='_blank'>${alt.name}</a><br/>${alt.Description}\"]\n`;
+      diagram += `class ${altId} alt;\n`;
     });
   });
 
