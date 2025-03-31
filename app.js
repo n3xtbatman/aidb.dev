@@ -62,14 +62,9 @@ window.onload = () => {
       diagram += `    Start --> Tool${i}\n`;
     });
 
-    if (typeof mermaid !== "undefined") {
-      mermaid.render('generatedFlowchart', diagram, (svg) => {
-        document.getElementById("flowchart").innerHTML = svg;
-      }, document.getElementById("flowchart"));
-    } else {
-      console.error("❌ Mermaid is not defined");
-      flowchartEl.innerHTML = "<p class='text-red-600 mt-4'>Mermaid.js failed to load.</p>";
-    }
+    // ✅ Safely inject and render Mermaid
+    document.getElementById("flowchart").innerHTML = `<pre class="mermaid">${diagram}</pre>`;
+    mermaid.init(undefined, "#flowchart");
   }
 
   window.generateFlowchart = generateFlowchart;
