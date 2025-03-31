@@ -1,181 +1,49 @@
 {
-  "Tools": {
-    "ChatGPT": {
-      "Description": "Text generation and Q&A",
-      "Category": "nlp",
-      "Subcategory": null,
-      "Use Cases": "chatbot, tutor, assistant",
-      "Logo URL": "https://logo.url/chatgpt.png",
-      "Website": "https://openai.com/chatgpt"
-    },
-    "DALL-E": {
-      "Description": "Image generation from text prompts",
-      "Category": "image generation",
-      "Subcategory": null,
-      "Use Cases": "art, design, mockups",
-      "Logo URL": "https://logo.url/dalle.png",
-      "Website": "https://openai.com/dall-e"
-    },
-    "Whisper": {
-      "Description": "Speech-to-text transcription",
+  "AIDB": {
+    "ElevenLabs": {
       "Category": "audio",
-      "Subcategory": null,
-      "Use Cases": "subtitles, meetings",
-      "Logo URL": "https://logo.url/whisper.png",
-      "Website": "https://openai.com/whisper"
-    },
-    "Midjourney": {
-      "Description": "Artistic image generation",
-      "Category": "image generation",
-      "Subcategory": null,
-      "Use Cases": "concept art, storytelling",
-      "Logo URL": "https://logo.url/midjourney.png",
-      "Website": "https://midjourney.com"
-    },
-    "GitHub Copilot": {
-      "Description": "Code completion and assistance",
-      "Category": "code",
-      "Subcategory": null,
-      "Use Cases": "programming, dev tools",
-      "Logo URL": "https://logo.url/copilot.png",
-      "Website": "https://github.com/features/copilot"
+      "Subcategory": "music",
+      "Primary?": false,
+      "Function / Use": "Audio enhancement & cleanup",
+      "Website": "https://elevenlabs.io",
+      "Logo URL": "https://logo.url/11labs.png",
+      "Description": "Natural-sounding voice synthesis"
     },
     "Soundraw": {
-      "Description": "AI music generation",
       "Category": "audio",
       "Subcategory": "music",
-      "Use Cases": "music, background tracks",
+      "Primary?": true,
+      "Function / Use": "Generate background music",
+      "Website": "https://soundraw.io",
       "Logo URL": "https://logo.url/soundraw.png",
-      "Website": "https://soundraw.io"
+      "Description": "AI music generation"
     },
-    "Runway": {
-      "Description": "Video generation and editing",
-      "Category": "video",
-      "Subcategory": null,
-      "Use Cases": "film, editing, green screen",
-      "Logo URL": "https://logo.url/runway.png",
-      "Website": "https://runwayml.com"
+    "DALL-E": {
+      "Category": "image",
+      "Subcategory": "2D image",
+      "Primary?": true,
+      "Function / Use": "Generate art from text",
+      "Website": "https://openai.com/dall-e",
+      "Logo URL": "https://logo.url/dalle.png",
+      "Description": "Image generation"
     },
-    "Claude": {
-      "Description": "Conversational assistant from Anthropic",
-      "Category": "nlp",
-      "Subcategory": null,
-      "Use Cases": "chat, writing, ideation",
-      "Logo URL": "https://logo.url/claude.png",
-      "Website": "https://www.anthropic.com"
+    "Midjourney": {
+      "Category": "image",
+      "Subcategory": "2D image",
+      "Primary?": false,
+      "Function / Use": "Stylized concept art",
+      "Website": "https://midjourney.com",
+      "Logo URL": "https://logo.url/midjourney.png",
+      "Description": "Artistic image generation"
     },
-    "Luma AI": {
-      "Description": "3D reconstruction from video",
-      "Category": "3d modeling",
-      "Subcategory": null,
-      "Use Cases": "AR, 3D scan, modeling",
-      "Logo URL": "https://logo.url/luma.png",
-      "Website": "https://lumalabs.ai"
-    },
-    "Krea": {
-      "Description": "Real-time generative design",
-      "Category": "image generation",
-      "Subcategory": null,
-      "Use Cases": "design, moodboards",
-      "Logo URL": "https://logo.url/krea.png",
-      "Website": "https://krea.ai"
-    },
-    "Pika Labs": {
-      "Description": "Text-to-video generation",
-      "Category": "video",
-      "Subcategory": null,
-      "Use Cases": "animation, storytelling",
-      "Logo URL": "https://logo.url/pika.png",
-      "Website": "https://pika.art"
-    },
-    "ElevenLabs": {
-      "Description": "Voice synthesis",
-      "Category": "audio",
-      "Subcategory": "voice",
-      "Use Cases": "narration, voiceover",
-      "Logo URL": "https://logo.url/11labs.png",
-      "Website": "https://elevenlabs.io"
-    },
-    "Leonardo AI": {
-      "Description": "Game asset generation",
-      "Category": "image generation",
-      "Subcategory": null,
-      "Use Cases": "game art, items",
-      "Logo URL": "https://logo.url/leonardo.png",
-      "Website": "https://leonardo.ai"
-    },
-    "AIVA": {
-      "Description": "AI music composition",
-      "Category": "audio",
-      "Subcategory": "music",
-      "Use Cases": "classical, film music",
-      "Logo URL": "https://logo.url/aiva.png",
-      "Website": "https://aiva.ai"
-    },
-    "Boomy": {
-      "Description": "Instant music creation",
-      "Category": "audio",
-      "Subcategory": null,
-      "Use Cases": "music for social, artists",
-      "Logo URL": "https://logo.url/boomy.png",
-      "Website": "https://boomy.com"
-    },
-    "Suno": {
-      "Description": "Music generation from prompts",
-      "Category": "audio",
-      "Subcategory": null,
-      "Use Cases": "jingles, sound design",
-      "Logo URL": "https://logo.url/suno.png",
-      "Website": "https://suno.ai"
-    },
-    "Tome": {
-      "Description": "AI-powered presentation builder",
-      "Category": "productivity",
-      "Subcategory": null,
-      "Use Cases": "slides, storytelling",
-      "Logo URL": "https://logo.url/tome.png",
-      "Website": "https://tome.app"
-    },
-    "SlidesAI": {
-      "Description": "Slides from text",
-      "Category": "productivity",
-      "Subcategory": null,
-      "Use Cases": "slide decks, business",
-      "Logo URL": "https://logo.url/slidesai.png",
-      "Website": "https://slidesai.io"
-    },
-    "Synthesia": {
-      "Description": "AI video avatars",
-      "Category": "video",
-      "Subcategory": null,
-      "Use Cases": "explainer videos, training",
-      "Logo URL": "https://logo.url/synthesia.png",
-      "Website": "https://www.synthesia.io"
-    },
-    "Descript": {
-      "Description": "Audio & video editing with AI",
-      "Category": "audio",
-      "Subcategory": null,
-      "Use Cases": "podcasts, transcriptions",
-      "Logo URL": "https://logo.url/descript.png",
-      "Website": "https://www.descript.com"
-    }
-  },
-  "Categories": {
-    "art": {
-      "Keywords": "game, draw, design, graphic",
-      "Top Tool": "DALL·E",
-      "Alt Tools": null
-    },
-    "code": {
-      "Keywords": "website, app, build, game",
-      "Top Tool": "GitHub Copilot",
-      "Alt Tools": "Codex"
-    },
-    "audio": {
-      "Keywords": "sfx",
-      "Top Tool": "ElevenLabs",
-      "Alt Tools": null
+    "GitHub Copilot": {
+      "Category": "code",
+      "Subcategory": "code",
+      "Primary?": true,
+      "Function / Use": "Code completion and generation",
+      "Website": "https://github.com/features/copilot",
+      "Logo URL": "https://logo.url/copilot.png",
+      "Description": "Dev tool assistant"
     }
   }
 }
