@@ -75,7 +75,7 @@ function simplifyPrompt(prompt) {
 function generateFlowchart() {
   const input = document.getElementById("promptInput").value.toLowerCase();
   const resultsEl = document.getElementById("autocompleteResults");
-  resultsEl.classList.add("hidden"); // always hide on generation
+  resultsEl.classList.add("hidden");
 
   const flowchartEl = document.getElementById("flowchart-inner");
   if (!flowchartEl) {
@@ -99,30 +99,38 @@ function generateFlowchart() {
 
   let diagram = "graph TD\n";
   const rootLabel = simplifyPrompt(input);
-  diagram += `Start[\"${rootLabel}\"]\n`;
+  diagram += `Start["${rootLabel}"]\n`;
 
   matchedCategories.forEach((match) => {
-    const idPrefix = match.category.toLowerCase();
-    const topToolName = match["Top Tool"];
-    const altToolNames = (match["Alt Tools"] || "").split(",").map(t => t.trim());
-    const topTool = toolData[topToolName];
-    const topToolUrl = topTool?.Website || "#";
+    const idPrefix = match.category.toLowerCase().replace(/\s+/g, '_');
+    const subcategories = match.Subcategories || {};
 
-    const topId = `${idPrefix}_top`;
     diagram += `Start --> ${idPrefix}\n`;
-    diagram += `${idPrefix}[\"${match.category.toUpperCase()}\"] --> ${topId}[\"<a href='${topToolUrl}' target='_blank'><b>${topToolName}</b></a>\"]\n`;
-    diagram += `class ${topId} top;\n`;
+    diagram += `${idPrefix}["${match.category.toUpperCase()}"]\n`;
 
-    if (altToolNames.length > 0) {
-      const altId = `${idPrefix}_alts`;
-      const altLabel = altToolNames.map(name => `<span>${name}</span>`).join('<br/>');
-      diagram += `${topId} --> ${altId}[\"${altLabel}\"]\n`;
-      diagram += `class ${altId} alt-list;\n`;
-    }
+    Object.entries(subcategories).forEach(([subcatName, subcatData], subIndex) => {
+      const subcatId = `${idPrefix}_sub_${subIndex}`;
+      diagram += `${idPrefix} --> ${subcatId}\n`;
+      diagram += `${subcatId}["${subcatName.toUpperCase()}"]\n`;
+
+      const topTool = toolData[subcatData["Top Tool"]];
+      if (topTool) {
+        const topId = `${subcatId}_top`;
+        diagram += `${subcatId} --> ${topId}["<a href='${topTool.Website}' target='_blank'><b>${subcatData["Top Tool"]}</b></a>"]\n`;
+        diagram += `class ${topId} top;\n`;
+      }
+
+      (subcatData["Alt Tools"] || "").split(",").map(t => t.trim()).forEach((alt, i) => {
+        if (!alt) return;
+        const altId = `${subcatId}_alt_${i}`;
+        diagram += `${subcatId}_top --> ${altId}["${alt}"]\n`;
+        diagram += `class ${altId} alt;\n`;
+      });
+    });
   });
 
   diagram += `\nclassDef top fill:#bbf7d0,stroke:#22c55e,stroke-width:2px,color:#064e3b,font-weight:bold;\n`;
-  diagram += `classDef alt-list fill:#e5e7eb,stroke:#6b7280,stroke-width:1px,color:#374151;\n`;
+  diagram += `classDef alt fill:#e5e7eb,stroke:#6b7280,stroke-width:1px,color:#374151;\n`;
 
   flowchartEl.innerHTML = `<div class='mermaid'>${diagram}</div>`;
   mermaid.run();
