@@ -5,13 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Flowchart Generator</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://esm.sh/reactflow@11.4.0/dist/style.css" rel="stylesheet" />
   <style>
-    html, body {
+    html, body, #root {
       margin: 0;
       padding: 0;
-      height: 100%;
-    }
-    #root {
       height: 100%;
     }
     .react-flow__node-primary {
@@ -36,79 +34,79 @@
     import ReactDOM from 'https://esm.sh/react-dom@18';
     import ReactFlow, { Background, Controls } from 'https://esm.sh/reactflow@11.4.0';
 
-    async function App() {
-      const AIDB = await fetch("data/AIDB.json").then(res => res.json());
-      const [elements, setElements] = React.useState([]);
+    function App() {
+      const [elements, setElements] = useState([]);
 
-      React.useEffect(() => {
-        const nodes = [];
-        const edges = [];
-        const grouped = {};
+      useEffect(() => {
+        async function fetchData() {
+          const AIDB = await fetch("data/AIDB.json").then(res => res.json());
 
-        for (const [tool, data] of Object.entries(AIDB)) {
-          const key = `${data.Category}--${data.Subcategory}`;
-          if (!grouped[key]) grouped[key] = [];
-          grouped[key].push({ tool, ...data });
+          const nodes = [];
+          const edges = [];
+          const grouped = {};
+
+          for (const [tool, data] of Object.entries(AIDB)) {
+            const key = `${data.Category}--${data.Subcategory}`;
+            if (!grouped[key]) grouped[key] = [];
+            grouped[key].push({ tool, ...data });
+          }
+
+          Object.entries(grouped).forEach(([groupKey, tools], i) => {
+            const [category, subcategory] = groupKey.split('--');
+            const stageId = `stage-${groupKey}`;
+
+            nodes.push({
+              id: stageId,
+              type: 'default',
+              position: { x: i * 300, y: 50 },
+              data: { label: `${category.toUpperCase()} - ${subcategory}` },
+            });
+
+            tools.forEach((tool, j) => {
+              const id = `${groupKey}-${tool.tool}`;
+              nodes.push({
+                id,
+                type: tool["Primary?"] ? 'primary' : 'alt',
+                position: { x: i * 300, y: 120 + 100 * j },
+                data: {
+                  label: `<a href='${tool.Website}' target='_blank'><strong>${tool.tool}</strong></a><br/><small>${tool["Function / Use"]}</small>`
+                },
+              });
+              edges.push({ id: `e-${stageId}-${id}`, source: stageId, target: id });
+            });
+          });
+
+          setElements([...nodes, ...edges]);
         }
 
-        Object.entries(grouped).forEach(([groupKey, tools], i) => {
-          const [category, subcategory] = groupKey.split('--');
-          const stageId = `stage-${groupKey}`;
-
-          nodes.push({
-            id: stageId,
-            type: 'default',
-            position: { x: i * 300, y: 50 },
-            data: { label: `${category.toUpperCase()} - ${subcategory}` },
-          });
-
-          let y = 100;
-          tools.forEach((tool, j) => {
-            const id = `${groupKey}-${tool.tool}`;
-            nodes.push({
-              id,
-              type: tool["Primary?"] ? 'primary' : 'alt',
-              position: { x: i * 300, y: y + 100 * (j + 1) },
-              data: {
-                label: (
-                  `<a href='${tool.Website}' target='_blank'><strong>${tool.tool}</strong></a><br/><small>${tool["Function / Use"]}</small>`
-                )
-              },
-            });
-            edges.push({ id: `e-${stageId}-${id}`, source: stageId, target: id });
-          });
-        });
-
-        setElements([...nodes, ...edges]);
+        fetchData();
       }, []);
 
-      return (
+      return React.createElement(
+        'div',
+        { style: { height: '80vh' } },
         React.createElement(
-          'div',
-          { style: { height: '80vh' } },
-          React.createElement(
-            ReactFlow,
-            {
-              elements: elements,
-              fitView: true,
-              nodeTypes: {
-                primary: ({ data }) =>
-                  React.createElement('div', {
-                    className: 'react-flow__node-primary p-2 rounded text-sm text-center',
-                    dangerouslySetInnerHTML: { __html: data.label },
-                  }),
-                alt: ({ data }) =>
-                  React.createElement('div', {
-                    className: 'react-flow__node-alt p-2 rounded text-sm text-center',
-                    dangerouslySetInnerHTML: { __html: data.label },
-                  }),
-              },
-              children: [
-                React.createElement(Background, {}),
-                React.createElement(Controls, {}),
-              ],
-            }
-          )
+          ReactFlow,
+          {
+            elements,
+            fitView: true,
+            nodeTypes: {
+              primary: ({ data }) =>
+                React.createElement('div', {
+                  className: 'react-flow__node-primary p-2 rounded text-sm text-center',
+                  dangerouslySetInnerHTML: { __html: data.label },
+                }),
+              alt: ({ data }) =>
+                React.createElement('div', {
+                  className: 'react-flow__node-alt p-2 rounded text-sm text-center',
+                  dangerouslySetInnerHTML: { __html: data.label },
+                }),
+            },
+            children: [
+              React.createElement(Background, {}),
+              React.createElement(Controls, {}),
+            ],
+          }
         )
       );
     }
