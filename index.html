@@ -3,116 +3,118 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Flowchart Generator</title>
+  <title>AI Agent Flow</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://esm.sh/reactflow@11.4.0/dist/style.css" rel="stylesheet" />
+  <link href="https://unpkg.com/reactflow@11.7.3/dist/style.css" rel="stylesheet">
   <style>
     html, body, #root {
-      margin: 0;
-      padding: 0;
       height: 100%;
+      margin: 0;
+    }
+    .react-flow__node-custom {
+      border: 2px solid #4b5563;
+      background-color: #f9fafb;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      font-size: 0.875rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
     .react-flow__node-primary {
       background: #bbf7d0;
-      border: 2px solid #22c55e;
+      border-color: #22c55e;
       font-weight: bold;
-    }
-    .react-flow__node-alt {
-      background: #e5e7eb;
-      border: 1px solid #6b7280;
     }
   </style>
 </head>
-<body class="bg-white text-gray-900 font-sans">
-  <div class="container mx-auto py-8 px-4">
-    <h1 class="text-3xl font-bold text-center mb-6">Generate a Flowchart</h1>
-    <div id="root"></div>
-  </div>
-
+<body class="bg-white text-gray-900">
+  <div id="root"></div>
   <script type="module">
-    import React, { useEffect, useState } from 'https://esm.sh/react@18';
-    import { createRoot } from 'https://esm.sh/react-dom@18';
-    import ReactFlow, { Background, Controls } from 'https://esm.sh/reactflow@11.4.0';
+    import React, { useEffect, useState } from 'https://esm.sh/react';
+    import ReactDOM from 'https://esm.sh/react-dom';
+    import ReactFlow, { Background, Controls, MiniMap, useNodesState, useEdgesState, addEdge } from 'https://esm.sh/reactflow';
 
-    const PrimaryNode = ({ data }) => (
-      <div className="react-flow__node-primary p-2 rounded text-sm text-center">
-        <a href={data.website} target="_blank" class="font-bold underline">{data.tool}</a>
-        <p class="text-xs mt-1">{data.function}</p>
-      </div>
-    );
+    const flowData = [
+      {
+        id: 'voice',
+        label: 'Allows us to talk to the agent in natural voice.',
+        tool: 'ElevenLabs',
+        logo: 'https://logo.url/11labs.png',
+        link: 'https://elevenlabs.io'
+      },
+      {
+        id: 'workflow',
+        label: 'A workflow platform that seamlessly integrates all tools.',
+        tool: 'n8n',
+        logo: 'https://logo.url/n8n.png',
+        link: 'https://n8n.io'
+      },
+      {
+        id: 'llm',
+        label: "LLMs that we use to reason and plan the itinerary.",
+        tool: 'OpenAI / DeepSeek',
+        logo: '',
+        link: '#'
+      },
+      {
+        id: 'search',
+        label: 'APIs that we use to fetch hotels, flights and activities',
+        tool: 'Tavily / SerpAPI',
+        logo: '',
+        link: '#'
+      },
+      {
+        id: 'call',
+        label: 'Allowing users to call on a number and talk to the agent directly.',
+        tool: 'Twilio',
+        logo: '',
+        link: 'https://twilio.com'
+      }
+    ];
 
-    const AltNode = ({ data }) => (
-      <div className="react-flow__node-alt p-2 rounded text-sm text-center">
-        <a href={data.website} target="_blank" class="font-semibold">{data.tool}</a>
-        <p class="text-xs mt-1">{data.function}</p>
-      </div>
-    );
+    const nodes = flowData.map((item, i) => ({
+      id: item.id,
+      position: { x: 200, y: i * 150 },
+      type: 'custom',
+      data: { label: `<strong>${item.tool}</strong><br/><small>${item.label}</small>` },
+    }));
+
+    const edges = [
+      { id: 'e1', source: 'voice', target: 'workflow' },
+      { id: 'e2', source: 'workflow', target: 'llm' },
+      { id: 'e3', source: 'llm', target: 'search' },
+      { id: 'e4', source: 'search', target: 'call' },
+    ];
+
+    const nodeTypes = {
+      custom: ({ data }) => (
+        <div className="react-flow__node-custom" dangerouslySetInnerHTML={{ __html: data.label }} />
+      )
+    };
 
     function App() {
-      const [elements, setElements] = useState([]);
-
-      useEffect(() => {
-        async function fetchData() {
-          const AIDB = await fetch("data/AIDB.json").then(res => res.json());
-          const nodes = [];
-          const edges = [];
-
-          const grouped = {};
-          for (const [tool, data] of Object.entries(AIDB)) {
-            const key = `${data.Category}--${data.Subcategory}`;
-            if (!grouped[key]) grouped[key] = [];
-            grouped[key].push({ tool, ...data });
-          }
-
-          Object.entries(grouped).forEach(([groupKey, tools], i) => {
-            const [category, subcategory] = groupKey.split('--');
-            const stageId = `stage-${groupKey}`;
-
-            nodes.push({
-              id: stageId,
-              type: 'default',
-              position: { x: i * 300, y: 50 },
-              data: { label: `${category.toUpperCase()} - ${subcategory}` },
-            });
-
-            tools.forEach((tool, j) => {
-              const id = `${groupKey}-${tool.tool}`;
-              nodes.push({
-                id,
-                type: tool["Primary?"] ? 'primary' : 'alt',
-                position: { x: i * 300, y: 130 + 120 * j },
-                data: {
-                  tool: tool.tool,
-                  website: tool.Website,
-                  function: tool["Function / Use"]
-                }
-              });
-              edges.push({ id: `e-${stageId}-${id}`, source: stageId, target: id });
-            });
-          });
-
-          setElements([...nodes, ...edges]);
-        }
-
-        fetchData();
-      }, []);
+      const [rfNodes, setNodes] = useNodesState(nodes);
+      const [rfEdges, setEdges] = useEdgesState(edges);
 
       return (
-        <div style={{ height: '80vh' }}>
+        <div style={{ width: '100%', height: '100vh' }}>
           <ReactFlow
-            elements={elements}
+            nodes={rfNodes}
+            edges={rfEdges}
+            onNodesChange={setNodes}
+            onEdgesChange={setEdges}
+            nodeTypes={nodeTypes}
             fitView
-            nodeTypes={{ primary: PrimaryNode, alt: AltNode }}
           >
             <Background />
             <Controls />
+            <MiniMap />
           </ReactFlow>
         </div>
       );
     }
 
-    const root = createRoot(document.getElementById("root"));
-    root.render(React.createElement(App));
+    ReactDOM.render(React.createElement(App), document.getElementById('root'));
   </script>
 </body>
 </html>
