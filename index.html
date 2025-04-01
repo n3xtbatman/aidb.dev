@@ -26,6 +26,11 @@
       background: #e5e7eb;
       border: 1px solid #6b7280;
     }
+    .step-description {
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
   </style>
 </head>
 <body class="bg-white text-gray-900 font-sans">
@@ -35,6 +40,7 @@
       <input id="promptInput" type="text" placeholder="What do you want to build?" class="border border-gray-300 rounded-l px-4 py-2 w-full max-w-md">
       <button id="generateBtn" class="bg-blue-600 text-white px-6 rounded-r hover:bg-blue-700">Generate</button>
     </div>
+    <div id="stepDescriptions" class="mb-4 text-sm text-gray-700 space-y-4"></div>
     <div id="root"></div>
   </div>
 
@@ -48,6 +54,7 @@
     function App() {
       const [elements, setElements] = useState([]);
       const [filter, setFilter] = useState('');
+      const [steps, setSteps] = useState([]);
 
       useEffect(() => {
         renderFlowchart();
@@ -64,6 +71,7 @@
       const renderFlowchart = () => {
         const nodes = [];
         const edges = [];
+        const stepList = [];
 
         const grouped = {};
         for (const [tool, data] of Object.entries(AIDB)) {
@@ -98,12 +106,16 @@
               },
             });
             edges.push({ id: `e-${stageId}-${id}`, source: stageId, target: id });
+            if (tool["Function / Use"] && tool.Description) {
+              stepList.push(`➡️ <strong>${tool.tool}</strong>: ${tool["Function / Use"]} — ${tool.Description}`);
+            }
           });
 
           xIndex++;
         });
 
         setElements([...nodes, ...edges]);
+        document.getElementById("stepDescriptions").innerHTML = stepList.map(s => `<p class='step-description'>${s}</p>`).join('');
       };
 
       return (
