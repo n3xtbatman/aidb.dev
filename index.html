@@ -4,14 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Flowchart Generator</title>
-
-  <!-- Load React and ReactDOM -->
-  <script type="module" crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script type="module" crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-
-  <!-- Load Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
   <style>
     html, body {
       margin: 0;
@@ -41,18 +34,17 @@
   <script type="module">
     import React, { useEffect, useState } from 'https://esm.sh/react';
     import ReactDOM from 'https://esm.sh/react-dom';
-    import ReactFlow, { Background, Controls } from 'https://esm.sh/reactflow';
+    import ReactFlow, { Background, Controls } from 'https://esm.sh/reactflow@11.6.3';
 
-    const AIDB = await fetch("data/AIDB.json").then(res => res.json());
+    async function App() {
+      const AIDB = await fetch("data/AIDB.json").then(res => res.json());
+      const [elements, setElements] = React.useState([]);
 
-    function App() {
-      const [elements, setElements] = useState([]);
-
-      useEffect(() => {
+      React.useEffect(() => {
         const nodes = [];
         const edges = [];
-
         const grouped = {};
+
         for (const [tool, data] of Object.entries(AIDB)) {
           const key = `${data.Category}--${data.Subcategory}`;
           if (!grouped[key]) grouped[key] = [];
@@ -76,7 +68,7 @@
             nodes.push({
               id,
               type: tool["Primary?"] ? 'primary' : 'alt',
-              position: { x: i * 300, y: y + 70 * (j + 1) },
+              position: { x: i * 300, y: y + 100 * (j + 1) },
               data: {
                 label: (
                   `<a href='${tool.Website}' target='_blank'><strong>${tool.tool}</strong></a><br/><small>${tool["Function / Use"]}</small>`
@@ -91,15 +83,33 @@
       }, []);
 
       return (
-        <div style={{ height: '80vh' }}>
-          <ReactFlow elements={elements} fitView nodeTypes={{
-            primary: ({ data }) => <div className="react-flow__node-primary p-2 rounded text-sm text-center" dangerouslySetInnerHTML={{ __html: data.label }} />,
-            alt: ({ data }) => <div className="react-flow__node-alt p-2 rounded text-sm text-center" dangerouslySetInnerHTML={{ __html: data.label }} />,
-          }}>
-            <Background />
-            <Controls />
-          </ReactFlow>
-        </div>
+        React.createElement(
+          'div',
+          { style: { height: '80vh' } },
+          React.createElement(
+            ReactFlow,
+            {
+              elements: elements,
+              fitView: true,
+              nodeTypes: {
+                primary: ({ data }) =>
+                  React.createElement('div', {
+                    className: 'react-flow__node-primary p-2 rounded text-sm text-center',
+                    dangerouslySetInnerHTML: { __html: data.label },
+                  }),
+                alt: ({ data }) =>
+                  React.createElement('div', {
+                    className: 'react-flow__node-alt p-2 rounded text-sm text-center',
+                    dangerouslySetInnerHTML: { __html: data.label },
+                  }),
+              },
+              children: [
+                React.createElement(Background, {}),
+                React.createElement(Controls, {}),
+              ],
+            }
+          )
+        )
       );
     }
 
