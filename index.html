@@ -6,7 +6,7 @@
   <title>AI Flowchart Generator</title>
   <script type="module" crossorigin src="https://esm.sh/react@18.2.0"></script>
   <script type="module" crossorigin src="https://esm.sh/react-dom@18.2.0"></script>
-  <script type="module" crossorigin src="https://esm.sh/reactflow@11.6.3"></script>
+  <script type="module" crossorigin src="https://esm.sh/reactflow@11.6.3?bundle"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     html, body {
@@ -54,7 +54,6 @@
     function App() {
       const [elements, setElements] = useState([]);
       const [filter, setFilter] = useState('');
-      const [steps, setSteps] = useState([]);
 
       useEffect(() => {
         renderFlowchart();
@@ -75,7 +74,7 @@
 
         const grouped = {};
         for (const [tool, data] of Object.entries(AIDB)) {
-          const key = `${data.Category}--${data.Subcategory}`;
+          const key = `${(data.Category || '').toLowerCase()}--${(data.Subcategory || '').toLowerCase()}`;
           if (!grouped[key]) grouped[key] = [];
           grouped[key].push({ tool, ...data });
         }
@@ -83,7 +82,11 @@
         let xIndex = 0;
         Object.entries(grouped).forEach(([groupKey, tools]) => {
           const [category, subcategory] = groupKey.split('--');
-          const matchesFilter = filter === '' || category.includes(filter) || subcategory.includes(filter) || tools.some(t => t.tool.toLowerCase().includes(filter));
+          const matchesFilter =
+            filter === '' ||
+            (category && category.toLowerCase().includes(filter)) ||
+            (subcategory && subcategory.toLowerCase().includes(filter)) ||
+            tools.some(t => t.tool.toLowerCase().includes(filter));
 
           if (!matchesFilter) return;
 
@@ -106,6 +109,7 @@
               },
             });
             edges.push({ id: `e-${stageId}-${id}`, source: stageId, target: id });
+
             if (tool["Function / Use"] && tool.Description) {
               stepList.push(`➡️ <strong>${tool.tool}</strong>: ${tool["Function / Use"]} — ${tool.Description}`);
             }
