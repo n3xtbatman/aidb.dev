@@ -1,4 +1,4 @@
-{
+const AIDB = {
   "ElevenLabs": {
     "Category": "audio",
     "Subcategory": "voice",
@@ -17,4 +17,4 @@
     "Logo URL": "https://logo.url/soundraw.png",
     "Description": "AI music generation"
   }
-}
+};
