@@ -21,7 +21,7 @@ let simplifiedPrompts = [
 
 window.onload = async () => {
   try {
-    const response = await fetch("data/AIDB.json");
+    const response = await fetch("https://raw.githubusercontent.com/n3xtbatman/aidb.dev/main/data/AIDB.json?cache=");
     const json = await response.json();
     toolData = json.Sheet11 || {};
     console.log("Loaded tools:", toolData);
