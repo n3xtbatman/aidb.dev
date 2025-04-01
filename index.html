@@ -4,10 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Flowchart Generator</title>
+
+  <!-- Load React and ReactDOM -->
   <script type="module" crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script type="module" crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script type="module" crossorigin src="https://unpkg.com/reactflow/dist/style.css"></script>
+
+  <!-- Load Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
   <style>
     html, body {
       margin: 0;
@@ -47,7 +51,6 @@
       useEffect(() => {
         const nodes = [];
         const edges = [];
-        let yOffset = 0;
 
         const grouped = {};
         for (const [tool, data] of Object.entries(AIDB)) {
