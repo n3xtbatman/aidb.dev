@@ -4,83 +4,103 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Flowchart Generator</title>
+  <script type="module" crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script type="module" crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script type="module" crossorigin src="https://unpkg.com/reactflow/dist/style.css"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    #autocompleteResults {
-      position: absolute;
-      background: white;
-      border: 1px solid #ccc;
-      width: 100%;
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 50;
-      text-align: left;
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
     }
-    #autocompleteResults div {
-      padding: 0.5rem 1rem;
-      cursor: pointer;
+    #root {
+      height: 100%;
     }
-    #autocompleteResults div:hover {
-      background-color: #f3f4f6;
+    .react-flow__node-primary {
+      background: #bbf7d0;
+      border: 2px solid #22c55e;
+      font-weight: bold;
     }
-    #flowchart svg {
-      width: 100% !important;
-      height: auto !important;
-    }
-    #flowchart-container {
-      display: flex;
-      justify-content: center;
-      overflow-x: auto;
-      padding-bottom: 2rem;
-    }
-    #flowchart > div {
-      min-width: 100%;
-      max-width: 100%;
-      overflow-x: auto;
-    }
-    @media (min-width: 768px) {
-      #flowchart > div {
-        max-width: 1000px;
-      }
+    .react-flow__node-alt {
+      background: #e5e7eb;
+      border: 1px solid #6b7280;
     }
   </style>
 </head>
 <body class="bg-white text-gray-900 font-sans">
-  <div class="container mx-auto py-16 px-4 text-center">
-    <h1 class="text-3xl font-bold mb-8">Generate a Flowchart</h1>
-
-    <div class="max-w-xl mx-auto relative flex flex-col sm:flex-row sm:items-center sm:space-x-2">
-      <input id="promptInput" type="text" placeholder="Type your prompt..." class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2 sm:mb-0" oninput="showAutocomplete(this.value)" onkeydown="if(event.key === 'Enter') generateFlowchart()" />
-      <button onclick="generateFlowchart()" class="bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition whitespace-nowrap">Generate</button>
-      <div id="autocompleteResults" class="hidden absolute top-full mt-1 left-0 right-0"></div>
-    </div>
-
-    <p class="mt-4 text-sm text-blue-500 cursor-pointer" onclick="showExamples()">Example Prompts</p>
-
-    <div id="flowchart-container" class="mt-12">
-      <div id="flowchart">
-        <div id="flowchart-inner" class="mx-auto"></div>
-      </div>
-    </div>
+  <div class="container mx-auto py-8 px-4">
+    <h1 class="text-3xl font-bold text-center mb-6">Generate a Flowchart</h1>
+    <div id="root"></div>
   </div>
 
-  <!-- Modal -->
-  <div id="exampleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
-    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md">
-      <h2 class="text-xl font-semibold mb-4">Example Prompts</h2>
-      <ul class="text-left space-y-2">
-        <li>🎮 "I want to make a game"</li>
-        <li>🎨 "What tools generate concept art?"</li>
-        <li>🎧 "Find AI music generators"</li>
-      </ul>
-      <button onclick="hideExamples()" class="mt-6 bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">Close</button>
-    </div>
-  </div>
+  <script type="module">
+    import React, { useEffect, useState } from 'https://esm.sh/react';
+    import ReactDOM from 'https://esm.sh/react-dom';
+    import ReactFlow, { Background, Controls } from 'https://esm.sh/reactflow';
 
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.0/dist/mermaid.min.js"></script>
-  <script>
-    mermaid.initialize({ startOnLoad: false });
+    const AIDB = await fetch("data/AIDB.json").then(res => res.json());
+
+    function App() {
+      const [elements, setElements] = useState([]);
+
+      useEffect(() => {
+        const nodes = [];
+        const edges = [];
+        let yOffset = 0;
+
+        const grouped = {};
+        for (const [tool, data] of Object.entries(AIDB)) {
+          const key = `${data.Category}--${data.Subcategory}`;
+          if (!grouped[key]) grouped[key] = [];
+          grouped[key].push({ tool, ...data });
+        }
+
+        Object.entries(grouped).forEach(([groupKey, tools], i) => {
+          const [category, subcategory] = groupKey.split('--');
+          const stageId = `stage-${groupKey}`;
+
+          nodes.push({
+            id: stageId,
+            type: 'default',
+            position: { x: i * 300, y: 50 },
+            data: { label: `${category.toUpperCase()} - ${subcategory}` },
+          });
+
+          let y = 100;
+          tools.forEach((tool, j) => {
+            const id = `${groupKey}-${tool.tool}`;
+            nodes.push({
+              id,
+              type: tool["Primary?"] ? 'primary' : 'alt',
+              position: { x: i * 300, y: y + 70 * (j + 1) },
+              data: {
+                label: (
+                  `<a href='${tool.Website}' target='_blank'><strong>${tool.tool}</strong></a><br/><small>${tool["Function / Use"]}</small>`
+                )
+              },
+            });
+            edges.push({ id: `e-${stageId}-${id}`, source: stageId, target: id });
+          });
+        });
+
+        setElements([...nodes, ...edges]);
+      }, []);
+
+      return (
+        <div style={{ height: '80vh' }}>
+          <ReactFlow elements={elements} fitView nodeTypes={{
+            primary: ({ data }) => <div className="react-flow__node-primary p-2 rounded text-sm text-center" dangerouslySetInnerHTML={{ __html: data.label }} />,
+            alt: ({ data }) => <div className="react-flow__node-alt p-2 rounded text-sm text-center" dangerouslySetInnerHTML={{ __html: data.label }} />,
+          }}>
+            <Background />
+            <Controls />
+          </ReactFlow>
+        </div>
+      );
+    }
+
+    ReactDOM.render(React.createElement(App), document.getElementById("root"));
   </script>
-  <script src="app.js" defer></script>
 </body>
 </html>
