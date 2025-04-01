@@ -56,14 +56,12 @@
     import ReactDOM from 'https://esm.sh/react-dom';
     import ReactFlow, { Background, Controls } from 'https://esm.sh/reactflow';
 
-    // ✅ Using Raw GitHub URL
-    const AIDB = await fetch("https://raw.githubusercontent.com/n3xtbatman/aidb.dev/main/data/AIDB.json")
+    const AIDB = await fetch("https://raw.githubusercontent.com/n3xtbatman/aidb.dev/main/data/AIDB.json?cache=" + Date.now())
       .then(res => res.json());
 
     function App() {
       const [elements, setElements] = useState([]);
       const [filter, setFilter] = useState('');
-      const [steps, setSteps] = useState([]);
 
       useEffect(() => {
         renderFlowchart();
